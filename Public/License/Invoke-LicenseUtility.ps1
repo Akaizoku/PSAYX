@@ -73,6 +73,25 @@ function Invoke-LicenseUtility {
                 }
                 
             }
+            "createRequest" {
+                # Create request file operation requires operation keyword as last parameter
+                $Index = (Select-String -InputObject $Parameters -Pattern '\s".+"').Matches.Index + 1
+                if ($Index -gt 0) {
+                    $Length = $Parameters.Length - $Index
+                    # Extract file name (offset to account for whitespace)
+                    $FileName = $Parameters.Substring($Index, $Length)
+                    $Parameters = $Parameters.Substring(0, $Index - 1)
+                    # Add filename to command
+                    $Command = "& ""$Path"" $Parameters $Operation $FileName"
+                } else {
+                    # Standard case
+                    $Command = "& ""$Path"" $Parameters $Operation"
+                }
+            }
+            "load" {
+                # Loading license file does not require operation parameter
+                $Command = "& ""$Path"" $Parameters"
+            }
             default {
                 # Standard command structure
                 $Command = "& ""$Path"" $Operation $Parameters"
