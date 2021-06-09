@@ -9,7 +9,7 @@
   File name:     PSAYX.psm1
   Author:        Florian Carrier
   Creation date: 2021-06-06
-  Last modified: 2021-06-07
+  Last modified: 2021-06-09
   Dependencies:  PowerShell Tool Kit (PSTK)
 
   .LINK
@@ -20,12 +20,12 @@
 #>
 
 # Get public and private function definition files
-$Public  = @( Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1"  -ErrorAction "SilentlyContinue" )
-$Private = @( Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" -ErrorAction "SilentlyContinue" )
+$Public  = @( Get-ChildItem -Path "$PSScriptRoot\Public"  -Filter "*.ps1" -Recurse -ErrorAction "SilentlyContinue" )
+$Private = @( Get-ChildItem -Path "$PSScriptRoot\Private" -Filter "*.ps1" -Recurse -ErrorAction "SilentlyContinue" )
 
 # Import files using dot sourcing
 foreach ($File in @($Public + $Private)) {
-  try   { . $File.FullName }
+  try   { . $File.FullName  }
   catch { Write-Error -Message "Failed to import function $($File.FullName): $PSItem" }
 }
 

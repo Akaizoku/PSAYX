@@ -1,16 +1,17 @@
-function Set-License {
+function Set-LicenseServer {
     <#
         .SYNOPSIS
-        Activate Alteryx license
+        Change Alteryx license
 
         .DESCRIPTION
-        Activate the license for Alteryx Designer via the command line utility
+        Change the licensing server for Alteryx via the command line utility
 
         .NOTES
-        File name:      Set-License.ps1
+        File name:      Set-LicenseServer.ps1
         Author:         Florian Carrier
-        Creation date:  2021-06-05
-        Last modified:  2021-06-07
+        Creation date:  2021-06-09
+        Last modified:  2021-06-09
+        Comment:        **Untested**
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -23,19 +24,20 @@ function Set-License {
     Param (
         [Parameter (
             Position    = 1,
-            Mandatory   = $true,
-            HelpMessage = "License key"
+            Mandatory   = $false,
+            HelpMessage = "Local license server URL"
         )]
         [ValidateNotNullOrEmpty ()]
-        [Alias ("License")]
+        [Alias ("Server")]
         [String]
-        $Key,
+        $URL,
         [Parameter (
             Position    = 2,
             Mandatory   = $true,
-            HelpMessage = "Email address of the user"
+            HelpMessage = "Email address or serial number associated with the machine."
         )]
         [ValidateNotNullOrEmpty ()]
+        [Alias ("Serial")]
         [String]
         $Email,
         [Parameter (
@@ -55,23 +57,19 @@ function Set-License {
     Begin {
         # Get global preference variables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-        # Define expected successful result
-        $ExpectedResult = "License seat was successfully moved to this computer"
+        # Define operation
+        $Operation = "setLicenseServerSystem"
     }
     Process {
-        # Define and execute command
-        $Command = "& $Path $Key $Email"
-        $Output = Invoke-Expression -Command $Command | Out-String
-        # Check output
-        If ($Output.StartsWith($ExpectedResult)) {
-            $Success    = $true
-            $Type       = "CHECK"
+        # Call licensing utility
+        if ($PSBoundParameters.ContainsKey("Email")) {
+            # Set the URL for the local license server (LLS)
+            $Output = Invoke-LicenseUtility -Path $Path -Operation $Operation -Parameters "$URL $Email" -Silent:$Silent
         } else {
-            $Success    = $false
-            $Type       = "ERROR"
+            # Remove value for LLS
+            $Output = Invoke-LicenseUtility -Path $Path -Operation $Operation -Parameters $Email -Silent:$Silent
         }
-        # Output
-        Write-Log -Type $Type -Message $Output -Silent:$Silent
-        return $Success
+        # Return output
+        return $Output
     }
 }

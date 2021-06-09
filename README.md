@@ -3,11 +3,12 @@
 Alteryx PowerShell module (PSAYX) is a framework for the automation of tasks for Alteryx.
 
 ## Table of contents <!-- omit in TOC -->
-- [Usage](#usage)
-  - [Installation](#installation)
-  - [Import](#import)
-  - [List available functions](#list-available-functions)
-- [Dependencies](#dependencies)
+- [Alteryx PowerShell module](#alteryx-powershell-module)
+  - [Usage](#usage)
+    - [Installation](#installation)
+    - [Import](#import)
+    - [List available functions](#list-available-functions)
+  - [Dependencies](#dependencies)
 
 ## Usage
 
@@ -30,7 +31,9 @@ Import-Module -Name "PSAYX"
 
 ### List available functions
 
-<!-- TODO -->
+```powershell
+Get-Command -Module "PSAYX"
+```
 
 ## Dependencies
 
