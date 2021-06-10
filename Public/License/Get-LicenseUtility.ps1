@@ -1,10 +1,10 @@
 function Get-LicenseUtility {
     <#
         .SYNOPSIS
-        Retrieve Alteryx license utility path directory
+        Retrieve Alteryx license utility path
 
         .DESCRIPTION
-        Search registry for the path to Alteryx license utility path
+        Search registry for the path to Alteryx license utility
 
         .NOTES
         File name:      Get-LicenseUtility.ps1
@@ -15,19 +15,35 @@ function Get-LicenseUtility {
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
     #>
+    [CmdLetBinding ()]
+    Param (
+        [Parameter (
+            Position    = 1,
+            Mandatory   = $false,
+            HelpMessage = "Path to Alteryx installation directory"
+        )]
+        [ValidateNotNullOrEmpty ()]
+        [String]
+        $Path
+    )
     Begin {
         # Registry key
         $Executable = "AlteryxActivateLicenseKeyCmd.exe"
     }
     Process {
-        # Retrieve Alteryx installation directory from registry
-        $InstallDirectory = Get-AlteryxInstallDirectory
-        # Build and test path
-        $Path = Join-Path -Path $InstallDirectory -ChildPath $Executable
-        if (Test-Path -Path $Path) {
-            return $Path
+        # Check installation directory
+        if ($PSBoundParameters.ContainsKey("Path")) {
+            $InstallDirectory = $Path
         } else {
-            Write-Log -Type "DEBUG" -Message $Path
+            # Retrieve Alteryx installation directory from registry
+            $InstallDirectory = Get-AlteryxInstallDirectory
+        }
+        # Build and test path
+        $LicenseUtility = Join-Path -Path $InstallDirectory -ChildPath $Executable
+        if (Test-Path -Path $LicenseUtility) {
+            return $LicenseUtility
+        } else {
+            Write-Log -Type "DEBUG" -Message $LicenseUtility
             Write-Log -Type "ERROR" -Message "Alteryx command-line license utility could not be found" -ErrorCode 1
         }
     }

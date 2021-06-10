@@ -70,9 +70,10 @@ PowerShellVersion = '3.0'
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = 'Backup-Database', 'Get-InstallDirectory', 'Get-ServerProcess', 
-               'Invoke-Service', 'Add-License', 'Get-License', 'Get-LicenseUtility', 
-               'Invoke-LicenseUtility', 'Load-LicenseFile', 'New-LicenseFile', 
-               'Remove-License', 'Reset-LicenseServer', 'Set-LicenseServer'
+               'Install-Server', 'Invoke-Service', 'Uninstall-Server', 'Add-License', 
+               'Get-License', 'Get-LicenseUtility', 'Invoke-LicenseUtility', 
+               'Load-LicenseFile', 'New-LicenseFile', 'Remove-License', 
+               'Reset-LicenseServer', 'Set-LicenseServer'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
@@ -113,7 +114,7 @@ PrivateData = @{
         # ReleaseNotes = ''
 
         # External dependent modules of this module
-        ExternalModuleDependencies = 'https://github.com/Akaizoku/PSTK'
+        ExternalModuleDependencies = 'PSTK'
 
     } # End of PSData hashtable
     

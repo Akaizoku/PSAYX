@@ -10,7 +10,7 @@ function Get-InstallDirectory {
         File name:      Get-InstallDirectory.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-05
-        Last modified:  2021-06-09
+        Last modified:  2021-06-10
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -23,7 +23,11 @@ function Get-InstallDirectory {
         # Retrieve Alteryx installation directory from registry
         if (Test-Object -Path $Registry) {
             $InstallDirectory = (Get-ItemProperty -Path $Registry).InstallDir64
-            return $InstallDirectory
+            if ($null -eq $InstallDirectory) {
+                Write-Log -Type "ERROR" -Message "Alteryx installation path could not be found" -ExitCode 1
+            } else {
+                return $InstallDirectory
+            }
         } else {
             Write-Log -Type "ERROR" -Message "Alteryx installation path could not be found" -ExitCode 1
         }
