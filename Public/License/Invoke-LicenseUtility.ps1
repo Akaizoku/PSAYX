@@ -4,7 +4,7 @@ function Invoke-LicenseUtility {
         Call Alteryx license command-line utility
 
         .DESCRIPTION
-        Create commands and call Alteryx license command-line utility
+        Retrieve the license(s) for Alteryx Designer via the command line utility
 
         .NOTES
         File name:      Invoke-LicenseUtility.ps1
