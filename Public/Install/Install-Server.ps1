@@ -84,7 +84,12 @@ function Install-Server {
             HelpMessage = "Switch to suppress non-critical messages"
         )]
         [Switch]
-        $Silent
+        $Silent,
+        [Parameter (
+            HelpMessage = "Switch to only generate command"
+        )]
+        [Switch]
+        $WhatIf
     )
     Begin {
         # Check installer
@@ -135,7 +140,12 @@ function Install-Server {
         $Command = ("&", """$Path""", $Arguments) -join " "
         Write-Log -Type "DEBUG" -Message $Command
         # Call installer and return output
-        $Output = Invoke-Expression -Command $Command | Out-String
+        if ($WhatIf -eq $true) {
+            $Output = $Command
+        } else {
+            # $Output = Invoke-Expression -Command $Command | Out-String
+            $Output = "test"
+        }
         return $Output
     }
 }
