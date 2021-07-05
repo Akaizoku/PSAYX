@@ -10,7 +10,7 @@ function Uninstall-Server {
         File name:      Uninstall-Server.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-06-10
+        Last modified:  2021-07-05
         Comment:        **Untested**
 
         .LINK
@@ -58,6 +58,8 @@ function Uninstall-Server {
         $Silent
     )
     Begin {
+        # Get global preference variables
+        Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
         # Check installer
         if (-Not (Test-Path -Path $Path)) {
             Write-Log -Type "ERROR" -Message "Path not found $Path"

@@ -10,7 +10,7 @@ function Get-LicenseUtility {
         File name:      Get-LicenseUtility.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-06-10
+        Last modified:  2021-07-05
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -27,6 +27,8 @@ function Get-LicenseUtility {
         $Path
     )
     Begin {
+        # Get global preference variables
+        Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
         # Registry key
         $Executable = "AlteryxActivateLicenseKeyCmd.exe"
     }

@@ -10,12 +10,14 @@ function Get-InstallDirectory {
         File name:      Get-InstallDirectory.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-05
-        Last modified:  2021-06-10
+        Last modified:  2021-07-05
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
     #>
     Begin {
+        # Get global preference variables
+        Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
         # Registry key
         $Registry = "HKLM:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\SRC\Alteryx"
     }

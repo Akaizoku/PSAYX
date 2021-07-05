@@ -10,7 +10,7 @@ function New-Package {
         File name:      New-Package.psm1
         Author:         Florian Carrier
         Creation date:  2021-06-15
-        Last modified:  2021-06-17
+        Last modified:  2021-07-05
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -97,6 +97,8 @@ function New-Package {
         $Unattended
     )
     Begin {
+        # Get global preference variables
+        Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
         # Define configuration values
         $Properties = [Ordered]@{
             "Author"        = $Author

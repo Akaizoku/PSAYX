@@ -10,7 +10,7 @@ function Get-ServerProcess {
         File name:      Get-ServerProcess.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-06-10
+        Last modified:  2021-07-05
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -39,6 +39,8 @@ function Get-ServerProcess {
         $InstallDirectory
     )
     Begin {
+        # Get global preference variables
+        Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
         # Processes
         switch ($Process) {
             "Gui"               { $Executable = "AlteryxGui.exe"                        }
