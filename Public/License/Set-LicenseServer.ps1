@@ -10,7 +10,7 @@ function Set-LicenseServer {
         File name:      Set-LicenseServer.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-09
-        Last modified:  2021-06-09
+        Last modified:  2021-07-05
         Comment:        **Untested**
 
         .LINK
@@ -38,7 +38,7 @@ function Set-LicenseServer {
         )]
         [ValidateNotNullOrEmpty ()]
         [Alias ("Serial")]
-        [String]
+        [System.Net.Mail.MailAddress]
         $Email,
         [Parameter (
             Position    = 3,

@@ -10,7 +10,7 @@ function Add-License {
         File name:      Add-License.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-05
-        Last modified:  2021-06-09
+        Last modified:  2021-07-05
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -39,7 +39,7 @@ function Add-License {
             HelpMessage = "Email address"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.Net.Mail.MailAddress]
         $Email,
         [Parameter (
             Position    = 3,
