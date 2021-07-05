@@ -10,7 +10,7 @@ function Invoke-Service {
         File name:      Invoke-Service.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-06-10
+        Last modified:  2021-07-05
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -18,7 +18,9 @@ function Invoke-Service {
         .LINK
         https://help.alteryx.com/current/server/alteryxservice-commands
     #>    
-    [CmdletBinding ()]
+    [CmdletBinding (
+        SupportsShouldProcess = $true
+    )]
     # Inputs
     Param (
         [Parameter (
@@ -70,7 +72,11 @@ function Invoke-Service {
         }
         Write-Log -Type "DEBUG" -Message $Command
         # Call utility and return output
-        $Output = Invoke-Expression -Command $Command | Out-String
-        return $Output
+        if ($PSCmdlet.ShouldProcess($Path, $Operation)) {
+            $Output = Invoke-Expression -Command $Command | Out-String
+            return $Output
+        } else {
+            return $Command
+        }
     }
 }

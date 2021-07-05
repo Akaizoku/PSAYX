@@ -10,7 +10,7 @@ function Install-Server {
         File name:      Install-Server.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-06-10
+        Last modified:  2021-07-05
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -18,7 +18,9 @@ function Install-Server {
         .LINK
         https://help.alteryx.com/current/product-activation-and-licensing/use-command-line-options
     #>
-    [CmdletBinding ()]
+    [CmdletBinding (
+        SupportsShouldProcess = $true
+    )]
     # Inputs
     Param (
         [Parameter (
@@ -84,28 +86,25 @@ function Install-Server {
             HelpMessage = "Switch to suppress non-critical messages"
         )]
         [Switch]
-        $Silent,
-        [Parameter (
-            HelpMessage = "Switch to only generate command"
-        )]
-        [Switch]
-        $WhatIf
+        $Silent
     )
     Begin {
+        # Get global preference variables
+        Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
         # Check installer
         if (-Not (Test-Path -Path $Path)) {
             Write-Log -Type "ERROR" -Message "Path not found $Path"
             Write-Log -Type "ERROR" -Message "Alteryx Server installer cannot be located" -ErrorCode 1
         }
         # Define install parameters
-        $Parameters = [System.Collections.ArrayList]::new()
+        $Parameters = [System.Collections.ArrayList]::New()
     }
     Process {
         # Customer installation directory
         if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
-            $Parameters.Add("TARGETDIR='$InstallDirectory'")
+            [Void]$Parameters.Add("TARGETDIR=""$InstallDirectory""")
             # if (Test-Path -Path $InstallDirectory) {
-            #     $Parameters.Add("TARGETDIR='$InstallDirectory'")
+            #     [Void]$Parameters.Add("TARGETDIR=""$InstallDirectory""")
             # } else {
             #     Write-Log -Type "ERROR" -Message "Path not found $InstallDirectory"
             #     Write-Log -Type "WARN"  -Message "Reverting to default installation path"
@@ -113,38 +112,39 @@ function Install-Server {
         }
         # Logs
         if ($PSBoundParameters.ContainsKey("Log")) {
-            $Parameters.Add("/l='$Log'")
+            [Void]$Parameters.Add("/l=""$Log""")
         }
         # Serial
         if ($PSBoundParameters.ContainsKey("Serial")) {
-            $Parameters.Add("SERIAL_NUM='$Serial'")
+            [Void]$Parameters.Add("SERIAL_NUM=""$Serial""")
         }
         # Language
         if ($PSBoundParameters.ContainsKey("Language")) {
-            $Parameters.Add("CMD_LANGUAGE='$Language'")
+            [Void]$Parameters.Add("CMD_LANGUAGE=""$Language""")
         }
         # System installation
         if ($AllUsers -eq $true) {
-            $Parameters.Add("ALLUSERS='TRUE'")
+            [Void]$Parameters.Add("ALLUSERS=""TRUE""")
         } else {
-            $Parameters.Add("ALLUSERS='FALSE'")
+            [Void]$Parameters.Add("ALLUSERS=""FALSE""")
         }
         # Unattended
         if ($PSBoundParameters.ContainsKey("Unattended")) {
-            $Parameters.Add("/s")
+            [Void]$Parameters.Add("/s")
         }
         # Installation
-        $Parameters.Add("REMOVE='FALSE'")
+        [Void]$Parameters.Add("REMOVE=""FALSE""")
         # Build command
         $Arguments = $Parameters -join " "
         $Command = ("&", """$Path""", $Arguments) -join " "
         Write-Log -Type "DEBUG" -Message $Command
         # Call installer and return output
-        if ($WhatIf -eq $true) {
-            $Output = $Command
+        if ($PSCmdlet.ShouldProcess($Path, "Install")) {
+            $Output = Invoke-Expression -Command $Command | Out-String
+            # $Output = Start-Process -FilePath $Path -ArgumentList $Arguments -Verb "RunAs" -PassThru -Wait
         } else {
-            # $Output = Invoke-Expression -Command $Command | Out-String
-            $Output = "test"
+            # Start-Process does not support WhatIf in PowerShell 5.1
+            $Output = $Command
         }
         return $Output
     }
