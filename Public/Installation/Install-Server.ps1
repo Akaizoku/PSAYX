@@ -10,7 +10,7 @@ function Install-Server {
         File name:      Install-Server.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-07-05
+        Last modified:  2021-07-08
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -103,6 +103,7 @@ function Install-Server {
         # Customer installation directory
         if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
             [Void]$Parameters.Add("TARGETDIR=""$InstallDirectory""")
+            # TODO ensure installation path is accessible
             # if (Test-Path -Path $InstallDirectory) {
             #     [Void]$Parameters.Add("TARGETDIR=""$InstallDirectory""")
             # } else {
@@ -129,23 +130,22 @@ function Install-Server {
             [Void]$Parameters.Add("ALLUSERS=""FALSE""")
         }
         # Unattended
-        if ($PSBoundParameters.ContainsKey("Unattended")) {
+        if ($Unattended -eq $true) {
             [Void]$Parameters.Add("/s")
         }
         # Installation
         [Void]$Parameters.Add("REMOVE=""FALSE""")
-        # Build command
+        # Build argument list and command for debug
         $Arguments = $Parameters -join " "
         $Command = ("&", """$Path""", $Arguments) -join " "
         Write-Log -Type "DEBUG" -Message $Command
-        # Call installer and return output
+        # Call installer and return process
         if ($PSCmdlet.ShouldProcess($Path, "Install")) {
-            $Output = Invoke-Expression -Command $Command | Out-String
-            # $Output = Start-Process -FilePath $Path -ArgumentList $Arguments -Verb "RunAs" -PassThru -Wait
+            $Process = Start-Process -FilePath $Path -ArgumentList $Arguments -Verb "RunAs" -PassThru -Wait
         } else {
-            # Start-Process does not support WhatIf in PowerShell 5.1
-            $Output = $Command
+            # Return dummy process
+            $Process = New-Object -TypeName "System.Diagnostics.Process"
         }
-        return $Output
+        return $Process
     }
 }

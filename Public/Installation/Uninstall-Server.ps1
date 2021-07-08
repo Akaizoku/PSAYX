@@ -1,17 +1,16 @@
 function Uninstall-Server {
     <#
         .SYNOPSIS
-        Install Alteryx Server
+        Uninstall Alteryx Server
 
         .DESCRIPTION
-        Configure and install Alteryx Server via command-line
+        Uninstall Alteryx Server and its components via command-line
 
         .NOTES
         File name:      Uninstall-Server.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-07-05
-        Comment:        **Untested**
+        Last modified:  2021-07-08
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -19,7 +18,9 @@ function Uninstall-Server {
         .LINK
         https://help.alteryx.com/current/product-activation-and-licensing/use-command-line-options
     #>
-    [CmdletBinding ()]
+    [CmdletBinding (
+        SupportsShouldProcess = $true
+    )]
     # Inputs
     Param (
         [Parameter (
@@ -32,14 +33,6 @@ function Uninstall-Server {
         $Path,
         [Parameter (
             Position    = 2,
-            Mandatory   = $false,
-            HelpMessage = "Target installation path"
-        )]
-        [ValidateNotNullOrEmpty ()]
-        [String]
-        $InstallDirectory,
-        [Parameter (
-            Position    = 3,
             Mandatory   = $false,
             HelpMessage = "Uninstallation log file path"
         )]
@@ -71,20 +64,25 @@ function Uninstall-Server {
     Process {
         # Logs
         if ($PSBoundParameters.ContainsKey("Log")) {
-            $Parameters.Add("/l='$Log'")
+            $Parameters.Add("/l=""$Log""")
         }
         # Unattended
-        if ($PSBoundParameters.ContainsKey("Unattended")) {
+        if ($Unattended -eq $true) {
             $Parameters.Add("/s")
         }
-        # Installation
-        $Parameters.Add("REMOVE='FALSE'")
-        # Build command
+        # Uninstallation
+        $Parameters.Add("REMOVE=""TRUE""")
+        # Build argument list and command for debug
         $Arguments = $Parameters -join " "
         $Command = ("&", """$Path""", $Arguments) -join " "
         Write-Log -Type "DEBUG" -Message $Command
-        # Call installer and return output
-        $Output = Invoke-Expression -Command $Command | Out-String
-        return $Output
+        # Call installer and return process
+        if ($PSCmdlet.ShouldProcess($Path, "Uninstall")) {
+            $Process = Start-Process -FilePath $Path -ArgumentList $Arguments -Verb "RunAs" -PassThru -Wait
+        } else {
+            # Return dummy process
+            $Process = New-Object -TypeName "System.Diagnostics.Process"
+        }
+        return $Process
     }
 }
