@@ -10,7 +10,7 @@ function Get-ServerProcess {
         File name:      Get-ServerProcess.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-07-05
+        Last modified:  2021-07-08
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -59,7 +59,7 @@ function Get-ServerProcess {
     Process {
         # Retrieve Alteryx installation directory
         if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
-            if (-Not (Test-Path -Path $InstallDirectory)) {
+            if (Test-Object -Path $InstallDirectory -NotFound) {
                 Write-Log -Type "ERROR" -Message "Path not found $InstallDirectory"
                 Write-Log -Type "WARN"  -Message "Reverting to installation directory from registry"
                 $InstallDirectory = Get-AlteryxInstallDirectory
@@ -67,9 +67,13 @@ function Get-ServerProcess {
         } else {
             $InstallDirectory = Get-AlteryxInstallDirectory
         }
-        # Build and test path
-        $Path = Join-Path -Path $InstallDirectory -ChildPath $Executable
-        if (Test-Path -Path $Path) {
+        # Build and validate path
+        if ($InstallDirectory -match "\bin$") {
+            $Path = Join-Path -Path $InstallDirectory -ChildPath $Executable
+        } else {
+            $Path = Join-Path -Path $InstallDirectory -ChildPath "bin\$Executable"
+        }
+        if (Test-Object -Path $Path) {
             return $Path
         } else {
             Write-Log -Type "DEBUG" -Message $Path
