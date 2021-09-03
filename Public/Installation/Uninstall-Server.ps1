@@ -79,6 +79,8 @@ function Uninstall-Server {
         # Call installer and return process
         if ($PSCmdlet.ShouldProcess($Path, "Uninstall")) {
             $Process = Start-Process -FilePath $Path -ArgumentList $Arguments -Verb "RunAs" -PassThru -Wait
+            # Prevent missing exit code in output
+            $Process.WaitForExit()
         } else {
             # Return dummy process
             $Process = New-Object -TypeName "System.Diagnostics.Process"
