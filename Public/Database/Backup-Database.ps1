@@ -10,7 +10,7 @@ function Backup-Database {
         File name:      Backup-Database.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-07-05
+        Last modified:  2021-08-26
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -24,11 +24,11 @@ function Backup-Database {
         [Parameter (
             Position    = 1,
             Mandatory   = $true,
-            HelpMessage = "Path to the backup file to generate"
+            HelpMessage = "Path to the backup location"
         )]
         [ValidateNotNullOrEmpty ()]
         [String]
-        $FileName,
+        $Path,
         [Parameter (
             Position    = 2,
             Mandatory   = $false,
@@ -36,7 +36,7 @@ function Backup-Database {
         )]
         [ValidateNotNullOrEmpty ()]
         [String]
-        $Path
+        $ServicePath
     )
     Begin {
         # Get global preference variables
@@ -44,10 +44,10 @@ function Backup-Database {
         # Define operation
         $Operation = "emongodump"
         # Escape filename
-        $Parameter = """$FileName"""
+        $Parameter = """$Path"""
     }
     Process {
-        $Output = Invoke-Service -Path $Path -Operation $Operation -Parameter $Parameter
+        $Output = Invoke-Service -Path $ServicePath -Operation $Operation -Parameter $Parameter -WhatIf:$WhatIfPreference
         return $Output
     }
 }
