@@ -146,7 +146,7 @@ function New-Package {
                 Write-Log -Type "DEBUG" -Message $XML.OuterXml
                 # TODO Validate schema
                 # Retrieve existing values
-                # ! Create dummy copy of list of propertis to prevent error "Collection was modified; enumeration operation may not execute."
+                # ! Create dummy copy of list of properties to prevent error "Collection was modified; enumeration operation may not execute."
                 $DummyProperties = Copy-OrderedHashtable -Hashtable $Properties
                 foreach ($Key in $DummyProperties.Keys) {
                     if (-Not $PSBoundParameters.ContainsKey($Key)) {
