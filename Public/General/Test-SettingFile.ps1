@@ -10,7 +10,7 @@ function Test-SettingFile {
         File name:      Test-SettingFile.ps1
         Author:         Florian Carrier
         Creation date:  2021-08-30
-        Last modified:  2021-08-30
+        Last modified:  2021-09-20
     #>
     [CmdletBinding ()]
     Param (
@@ -44,6 +44,16 @@ function Test-SettingFile {
     Begin {
         # Get global preference vrariables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+        # Utility path
+        if ($PSBoundParameters.ContainsKey("Path")) {
+            if (Test-Object -Path $Path -NotFound) {
+                Write-Log -Type "ERROR" -Message "Path not found $Path" -ExitCode 1
+            }
+        } else {
+            $Path = Get-ServerProcess -Process "Service"
+        }
+    }
+    Process {
         # Define operation
         $Operation = "verifysettingfile"
         # Define parameter values
@@ -51,8 +61,7 @@ function Test-SettingFile {
         if ($PSBoundParameters.ContainsKey("OutputPath")) {
             $Parameter = $Parameter + """,$OutputPath"""
         }
-    }
-    Process {
+        # Call utility
         $Output = Invoke-Service -Path $Path -Operation $Operation -Parameter $Parameter -WhatIf:$WhatIfPreference
         return $Output
     }

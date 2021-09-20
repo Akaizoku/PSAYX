@@ -51,12 +51,21 @@ function Set-Setting {
     Begin {
         # Get global preference vrariables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+        # Utility path
+        if ($PSBoundParameters.ContainsKey("Path")) {
+            if (Test-Object -Path $Path -NotFound) {
+                Write-Log -Type "ERROR" -Message "Path not found $Path" -ExitCode 1
+            }
+        } else {
+            $Path = Get-ServerProcess -Process "Service"
+        }
+    }
+    Process {
         # Define operation
         $Operation = "setting"
         # Build parameter string
         $Parameter = @($Root, $Name, $Value) -join ","
-    }
-    Process {
+        # Call utility
         $Output = Invoke-Service -Path $Path -Operation $Operation -Parameter $Parameter -WhatIf:$WhatIfPreference
         return $Output
     }

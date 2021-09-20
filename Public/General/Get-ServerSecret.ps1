@@ -10,7 +10,7 @@ function Get-ServerSecret {
         File name:      Get-ServerSecret.ps1
         Author:         Florian Carrier
         Creation date:  2021-08-27
-        Last modified:  2021-08-27
+        Last modified:  2021-09-20
     #>
     [CmdletBinding ()]
     Param (
@@ -27,10 +27,19 @@ function Get-ServerSecret {
     Begin {
         # Get global preference vrariables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-        # Define operation
-        $Operation = "getserversecret"
+        # Utility path
+        if ($PSBoundParameters.ContainsKey("Path")) {
+            if (Test-Object -Path $Path -NotFound) {
+                Write-Log -Type "ERROR" -Message "Path not found $Path" -ExitCode 1
+            }
+        } else {
+            $Path = Get-ServerProcess -Process "Service"
+        }
     }
     Process {
+        # Define operation
+        $Operation = "getserversecret"
+        # Call utility
         $Output = Invoke-Service -Path $Path -Operation $Operation -WhatIf:$WhatIfPreference
         return $Output
     }

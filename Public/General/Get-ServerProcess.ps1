@@ -10,7 +10,7 @@ function Get-ServerProcess {
         File name:      Get-ServerProcess.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-07-08
+        Last modified:  2021-09-20
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -68,7 +68,7 @@ function Get-ServerProcess {
             $InstallDirectory = Get-AlteryxInstallDirectory
         }
         # Build and validate path
-        if ($InstallDirectory -match "\bin$") {
+        if ($InstallDirectory -match "\\bin\\?$") {
             $Path = Join-Path -Path $InstallDirectory -ChildPath $Executable
         } else {
             $Path = Join-Path -Path $InstallDirectory -ChildPath "bin\$Executable"
