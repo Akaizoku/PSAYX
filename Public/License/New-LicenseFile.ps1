@@ -10,7 +10,7 @@ function New-LicenseFile {
         File name:      New-LicenseFile.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-09
-        Last modified:  2021-07-05
+        Last modified:  2021-09-20
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -66,6 +66,16 @@ function New-LicenseFile {
     Begin {
         # Get global preference variables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+        # Utility path
+        if ($PSBoundParameters.ContainsKey("Path")) {
+            if (Test-Object -Path $Path -NotFound) {
+                Write-Log -Type "ERROR" -Message "Path not found $Path" -ExitCode 1
+            }
+        } else {
+            $Path = Get-Utility -Utility "License"
+        }
+    }
+    Process {
         # Define operation
         $Operation = "createRequest"
         # Define parameters
@@ -81,8 +91,6 @@ function New-LicenseFile {
                 Write-Log -Type "WARN"  -Message "Reverting to default output path: $DefaultPath"
             }
         }
-    }
-    Process {
         # Call licensing utility
         $Output = Invoke-LicenseUtility -Path $Path -Operation $Operation -Parameters $Parameters -Silent:$Silent
         # Return output

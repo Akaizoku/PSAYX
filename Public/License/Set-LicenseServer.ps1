@@ -57,10 +57,18 @@ function Set-LicenseServer {
     Begin {
         # Get global preference variables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-        # Define operation
-        $Operation = "setLicenseServerSystem"
+        # Utility path
+        if ($PSBoundParameters.ContainsKey("Path")) {
+            if (Test-Object -Path $Path -NotFound) {
+                Write-Log -Type "ERROR" -Message "Path not found $Path" -ExitCode 1
+            }
+        } else {
+            $Path = Get-Utility -Utility "License"
+        }
     }
     Process {
+        # Define operation
+        $Operation = "setLicenseServerSystem"
         # Call licensing utility
         if ($PSBoundParameters.ContainsKey("Email")) {
             # Set the URL for the local license server (LLS)
