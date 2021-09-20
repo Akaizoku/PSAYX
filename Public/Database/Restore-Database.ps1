@@ -10,7 +10,7 @@ function Restore-Database {
         File name:      Restore-Database.ps1
         Author:         Florian Carrier
         Creation date:  2021-08-26
-        Last modified:  2021-08-27
+        Last modified:  2021-09-20
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -49,12 +49,21 @@ function Restore-Database {
     Begin {
         # Get global preference variables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+        # Utility path
+        if ($PSBoundParameters.ContainsKey("ServicePath")) {
+            if (Test-Object -Path $ServicePath -NotFound) {
+                Write-Log -Type "ERROR" -Message "Path not found $ServicePath" -ExitCode 1
+            }
+        } else {
+            $ServicePath = Get-Utility -Utility "MongoDB"
+        }
+    }
+    Process {
         # Define operation
         $Operation = "emongorestore"
         # Escape paths
         $Parameter = """$SourcePath"",""$TargetPath"""
-    }
-    Process {
+        # Call utility
         $Output = Invoke-Service -Path $ServicePath -Operation $Operation -Parameter $Parameter -WhatIf:$WhatIfPreference
         return $Output
     }
