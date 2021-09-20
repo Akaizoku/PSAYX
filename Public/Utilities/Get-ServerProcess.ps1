@@ -26,7 +26,19 @@ function Get-ServerProcess {
             Mandatory   = $true,
             HelpMessage = "Process"
         )]
-        [ValidateNotNullOrEmpty ()]
+        [ValidateSet (
+            "Gui",
+            "EngineCmd",
+            "CEFRenderer",
+            "Service",
+            "ServerHost",
+            "AuthHost",
+            "MapRenderWorker",
+            "MongoController",
+            "WebInterface",
+            "Metrics",
+            "Database"
+        )]
         [String]
         $Process,
         [Parameter (
@@ -62,10 +74,10 @@ function Get-ServerProcess {
             if (Test-Object -Path $InstallDirectory -NotFound) {
                 Write-Log -Type "ERROR" -Message "Path not found $InstallDirectory"
                 Write-Log -Type "WARN"  -Message "Reverting to installation directory from registry"
-                $InstallDirectory = Get-AlteryxInstallDirectory
+                $InstallDirectory = Get-InstallDirectory
             }
         } else {
-            $InstallDirectory = Get-AlteryxInstallDirectory
+            $InstallDirectory = Get-InstallDirectory
         }
         # Build and validate path
         if ($InstallDirectory -match "\\bin\\?$") {
