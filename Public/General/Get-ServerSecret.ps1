@@ -33,7 +33,7 @@ function Get-ServerSecret {
                 Write-Log -Type "ERROR" -Message "Path not found $Path" -ExitCode 1
             }
         } else {
-            $Path = Get-ServerProcess -Process "Service"
+            $Path = Get-Utility -Utility "Service"
         }
     }
     Process {
