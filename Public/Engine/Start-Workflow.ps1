@@ -64,7 +64,7 @@ function Start-Workflow {
     }
     Process {
         # Parameters
-        $Parameters = ([System.String]::Concat($Workflow, " ", $AppValues)).Trim()
+        $Parameters = ([System.String]::Concat('"', $Workflow, '"', " ", $AppValues)).Trim()
         # Call engine
         if ($PSBoundParameters.ContainsKey("EngineVersion")) {
             $Output = Invoke-Engine -Path $EnginePath -Parameters $Parameters -EngineVersion $EngineVersion
