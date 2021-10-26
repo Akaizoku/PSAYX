@@ -1,6 +1,6 @@
 # Alteryx PowerShell module
 
-Alteryx PowerShell module (PSAYX) is a framework for the automation of tasks for Alteryx.
+Alteryx PowerShell module (PSAYX) is a framework for the automation of administration tasks for Alteryx.
 
 ## Table of contents <!-- omit in TOC -->
 
