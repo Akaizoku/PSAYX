@@ -10,7 +10,7 @@ function Get-Utility {
         File name:      Get-Utility.ps1
         Author:         Florian Carrier
         Creation date:  2021-09-16
-        Last modified:  2021-09-16
+        Last modified:  2021-10-26
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -50,7 +50,7 @@ function Get-Utility {
         $Processes = [Ordered]@{
             "Designer"  = "AlteryxGui.exe"
             "Engine"    = "AlteryxEngineCmd.exe"
-            "License"   = "AlteryxLicenseManager.exe"
+            "License"   = "AlteryxActivateLicenseKeyCmd.exe"
             "MongoDB"   = "mongod.exe"
             "Service"   = "AlteryxService.exe"
         }
