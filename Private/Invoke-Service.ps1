@@ -10,7 +10,7 @@ function Invoke-Service {
         File name:      Invoke-Service.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-07-05
+        Last modified:  2021-10-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -29,7 +29,7 @@ function Invoke-Service {
             HelpMessage = "Path to Alteryx Service executable"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $Path,
         [Parameter (
             Position    = 2,

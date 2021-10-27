@@ -10,7 +10,7 @@ function Uninstall-Server {
         File name:      Uninstall-Server.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-07-08
+        Last modified:  2021-10-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -29,7 +29,7 @@ function Uninstall-Server {
             HelpMessage = "Path to Alteryx Server installer"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $Path,
         [Parameter (
             Position    = 2,

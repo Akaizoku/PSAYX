@@ -10,7 +10,7 @@ function Set-SettingFile {
         File name:      Set-SettingFile.ps1
         Author:         Florian Carrier
         Creation date:  2021-08-27
-        Last modified:  2021-09-20
+        Last modified:  2021-10-27
     #>
     [CmdletBinding ()]
     Param (
@@ -20,7 +20,7 @@ function Set-SettingFile {
             HelpMessage = "Path to the configuration settings file"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $SettingFile,
         [Parameter (
             Position    = 2,
@@ -29,7 +29,7 @@ function Set-SettingFile {
         )]
         [ValidateNotNullOrEmpty ()]
         [Alias ("ServicePath")]
-        [String]
+        [System.IO.FileInfo]
         $Path
     )
     Begin {

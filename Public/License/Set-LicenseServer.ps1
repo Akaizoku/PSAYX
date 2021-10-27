@@ -10,7 +10,7 @@ function Set-LicenseServer {
         File name:      Set-LicenseServer.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-09
-        Last modified:  2021-07-05
+        Last modified:  2021-10-27
         Comment:        **Untested**
 
         .LINK
@@ -29,7 +29,7 @@ function Set-LicenseServer {
         )]
         [ValidateNotNullOrEmpty ()]
         [Alias ("Server")]
-        [String]
+        [System.String]
         $URL,
         [Parameter (
             Position    = 2,
@@ -46,7 +46,7 @@ function Set-LicenseServer {
             HelpMessage = "Path to Alteryx licensing utility"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $Path,
         [Parameter (
             HelpMessage = "Switch to suppress log generation"
