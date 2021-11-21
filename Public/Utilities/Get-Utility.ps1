@@ -10,13 +10,10 @@ function Get-Utility {
         File name:      Get-Utility.ps1
         Author:         Florian Carrier
         Creation date:  2021-09-16
-        Last modified:  2021-10-26
+        Last modified:  2021-11-20
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
-
-        .LINK
-        https://help.alteryx.com/current/server/server-processes-reference
     #>
     [CmdLetBinding ()]
     Param (
@@ -32,6 +29,7 @@ function Get-Utility {
             "MongoDB",
             "Service"
         )]
+        [Alias ("Name")]
         [System.String]
         $Utility,
         [Parameter (
@@ -48,28 +46,18 @@ function Get-Utility {
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
         # Processes
         $Processes = [Ordered]@{
-            "Designer"  = "AlteryxGui.exe"
-            "Engine"    = "AlteryxEngineCmd.exe"
-            "License"   = "AlteryxActivateLicenseKeyCmd.exe"
-            "MongoDB"   = "mongod.exe"
-            "Service"   = "AlteryxService.exe"
+            "Designer"  = "Gui"
+            "Engine"    = "EngineCmd"
+            "License"   = "License"
+            "MongoDB"   = "Database"
+            "Service"   = "Service"
         }
     }
     Process {
-        # Check installation directory
         if ($PSBoundParameters.ContainsKey("Path")) {
-            $InstallDirectory = $Path
+            Get-ServerProcess -Process $Processes.$Utility -InstallDirectory $Path
         } else {
-            # Retrieve Alteryx installation directory from registry
-            $InstallDirectory = Get-InstallDirectory
-        }
-        # Build and test path
-        $LicenseUtility = Join-Path -Path $InstallDirectory -ChildPath "bin\$($Processes.$Utility)"
-        if (Test-Object -Path $LicenseUtility) {
-            return $LicenseUtility
-        } else {
-            Write-Log -Type "DEBUG" -Message $LicenseUtility
-            Write-Log -Type "ERROR" -Message "Alteryx $Utility utility could not be located" -ErrorCode 1
+            Get-ServerProcess -Process $Processes.$Utility
         }
     }
 }
