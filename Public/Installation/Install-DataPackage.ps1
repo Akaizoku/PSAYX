@@ -10,7 +10,7 @@ function Install-DataPackage {
         File name:      Install-DataPackage.ps1
         Author:         Florian Carrier
         Creation date:  2021-07-01
-        Last modified:  2021-07-05
+        Last modified:  2021-10-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -42,7 +42,7 @@ function Install-DataPackage {
             HelpMessage = "Path to Alteryx data package installer"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $Path,
         [Parameter (
             Position    = 3,
@@ -58,7 +58,7 @@ function Install-DataPackage {
             HelpMessage = "Installation log file path"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $Log,
         [Parameter (
             HelpMessage = "Switch to prepare a network install"

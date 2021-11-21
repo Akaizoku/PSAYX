@@ -10,7 +10,7 @@ function Backup-Database {
         File name:      Backup-Database.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-09-20
+        Last modified:  2021-10-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -27,7 +27,7 @@ function Backup-Database {
             HelpMessage = "Path to the backup location"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.String]
         $Path,
         [Parameter (
             Position    = 2,
@@ -35,7 +35,7 @@ function Backup-Database {
             HelpMessage = "Path to Alteryx Service executable"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $ServicePath
     )
     Begin {

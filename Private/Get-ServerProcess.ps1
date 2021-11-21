@@ -10,7 +10,7 @@ function Get-ServerProcess {
         File name:      Get-ServerProcess.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-09-20
+        Last modified:  2021-11-20
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -27,17 +27,19 @@ function Get-ServerProcess {
             HelpMessage = "Process"
         )]
         [ValidateSet (
-            "Gui",
-            "EngineCmd",
-            "CEFRenderer",
-            "Service",
-            "ServerHost",
             "AuthHost",
+            "CEFRenderer",
+            "Database",
+            "EngineCmd",
+            "Gui",
+            "License",
+            "LicenseManager",
             "MapRenderWorker",
-            "MongoController",
-            "WebInterface",
             "Metrics",
-            "Database"
+            "MongoController",
+            "ServerHost",
+            "Service",
+            "WebInterface"
         )]
         [String]
         $Process,
@@ -55,17 +57,19 @@ function Get-ServerProcess {
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
         # Processes
         switch ($Process) {
-            "Gui"               { $Executable = "AlteryxGui.exe"                        }
-            "EngineCmd"         { $Executable = "AlteryxEngineCmd.exe"                  }
-            "CEFRenderer"       { $Executable = "AlteryxCEFRenderer.exe"                }
-            "Service"           { $Executable = "AlteryxService.exe"                    }
-            "ServerHost"        { $Executable = "AlteryxServerHost.exe"                 }
             "AuthHost"          { $Executable = "AlteryxAuthHost.exe"                   }
-            "MapRenderWorker"   { $Executable = "AlteryxService_MapRenderWorker.exe"    }
-            "MongoController"   { $Executable = "AlteryxService_MongoController.exe"    }
-            "WebInterface"      { $Executable = "AlteryxService_WebInterface.exe"       }
-            "Metrics"           { $Executable = "AlteryxMetrics.exe"                    }
+            "CEFRenderer"       { $Executable = "AlteryxCEFRenderer.exe"                }
             "Database"          { $Executable = "mongod.exe"                            }
+            "EngineCmd"         { $Executable = "AlteryxEngineCmd.exe"                  }
+            "Gui"               { $Executable = "AlteryxGui.exe"                        }
+            "License"           { $Executable = "AlteryxActivateLicenseKeyCmd.exe"      }
+            "LicenseManager"    { $Executable = "AlteryxLicenseManager.exe"             }
+            "MapRenderWorker"   { $Executable = "AlteryxService_MapRenderWorker.exe"    }
+            "Metrics"           { $Executable = "AlteryxMetrics.exe"                    }
+            "MongoController"   { $Executable = "AlteryxService_MongoController.exe"    }
+            "ServerHost"        { $Executable = "AlteryxServerHost.exe"                 }
+            "Service"           { $Executable = "AlteryxService.exe"                    }
+            "WebInterface"      { $Executable = "AlteryxService_WebInterface.exe"       }
         }
     }
     Process {

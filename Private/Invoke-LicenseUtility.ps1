@@ -10,7 +10,7 @@ function Invoke-LicenseUtility {
         File name:      Invoke-LicenseUtility.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-09
-        Last modified:  2021-06-09
+        Last modified:  2021-10-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -27,7 +27,7 @@ function Invoke-LicenseUtility {
             HelpMessage = "Path to Alteryx licensing utility"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $Path,
         [Parameter (
             Position    = 2,

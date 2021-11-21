@@ -10,7 +10,7 @@ function Remove-License {
         File name:      Remove-License.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-09
-        Last modified:  2021-09-20
+        Last modified:  2021-10-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -39,7 +39,7 @@ function Remove-License {
             HelpMessage = "Path to Alteryx licensing utility"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $Path,
         [Parameter (
             HelpMessage = "Switch to suppress log generation"

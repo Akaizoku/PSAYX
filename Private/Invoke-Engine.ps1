@@ -10,13 +10,16 @@ function Invoke-Engine {
         File name:      Invoke-Engine.ps1
         Author:         Florian Carrier
         Creation date:  2021-09-15
-        Last modified:  2021-09-15
+        Last modified:  2021-10-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
 
         .LINK
         https://help.alteryx.com/current/designer/run-workflows-command-line
+
+        .LINK
+        https://help.alteryx.com/current/designer/alteryx-amp-engine
     #>    
     [CmdletBinding (
         SupportsShouldProcess = $true
@@ -41,33 +44,19 @@ function Invoke-Engine {
         [System.String]
         $Parameters,
         [Parameter (
-            Position    = 3,
-            Mandatory   = $false,
-            HelpMessage = "Version of the engine to use"
+            HelpMessage = "Switch to force the use of the AMP engine"
         )]
-        [ValidateSet (
-            "1",
-            "2",
-            "Original",
-            "AMP"
-        )]
-        [System.String]
-        $EngineVersion
+        [Switch]
+        $AMP
     )
     Begin {
         # Get global preference variables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-        # Check engine version
-        if ($EngineVersion -in @("1", "Original")) {
-            $EngineOption = "/e1"
-        } elseif ($EngineVersion -in @("2", "AMP")) {
-            $EngineOption = "/e2"
-        }
     }
     Process {
         # Build command
-        if ($PSBoundParameters.ContainsKey("EngineVersion")) {
-            $Command = "& ""$Path"" $EngineOption $Parameters"
+        if ($AMP) {
+            $Command = "& ""$Path"" /amp $Parameters"
         } else {
             $Command = "& ""$Path"" $Parameters"
         }

@@ -10,7 +10,7 @@ function New-LicenseFile {
         File name:      New-LicenseFile.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-09
-        Last modified:  2021-09-20
+        Last modified:  2021-10-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -47,7 +47,7 @@ function New-LicenseFile {
             HelpMessage = "Path to Alteryx licensing utility"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $Path,
         [Parameter (
             Position    = 4,
@@ -55,7 +55,7 @@ function New-LicenseFile {
             HelpMessage = "Path to license request (.req) file to generate"
         )]
         [ValidateNotNullOrEmpty ()]
-        [String]
+        [System.IO.FileInfo]
         $FileName,
         [Parameter (
             HelpMessage = "Switch to suppress log generation"
