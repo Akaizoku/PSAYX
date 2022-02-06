@@ -1,16 +1,16 @@
-function Get-MongoPassword {
+function Get-EMongoPassword {
     <#
         .SYNOPSIS
-        Get MongoDB password
+        Get embedded MongoDB password
 
         .DESCRIPTION
-        Returns embedded MongoDB password
+        Returns embedded MongoDB database user and admin passwords
 
         .NOTES
-        File name:      Get-MongoPassword.ps1
+        File name:      Get-EMongoPassword.ps1
         Author:         Florian Carrier
         Creation date:  2022-01-21
-        Last modified:  2022-01-21
+        Last modified:  2022-01-31
         Comments:       - Requires Administrator-level access.
                         - Only works with embedded MongoDB instances.
     #>
