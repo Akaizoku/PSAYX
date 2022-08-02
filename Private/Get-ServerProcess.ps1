@@ -10,7 +10,7 @@ function Get-ServerProcess {
         File name:      Get-ServerProcess.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-11-20
+        Last modified:  2022-04-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -39,7 +39,8 @@ function Get-ServerProcess {
             "MongoController",
             "ServerHost",
             "Service",
-            "WebInterface"
+            "WebInterface",
+            "CloudCmd"
         )]
         [String]
         $Process,
@@ -70,6 +71,7 @@ function Get-ServerProcess {
             "ServerHost"        { $Executable = "AlteryxServerHost.exe"                 }
             "Service"           { $Executable = "AlteryxService.exe"                    }
             "WebInterface"      { $Executable = "AlteryxService_WebInterface.exe"       }
+            "CloudCmd"          { $Executable = "AlteryxCloudCmd.exe"                   }
         }
     }
     Process {
