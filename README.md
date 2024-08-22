@@ -1,5 +1,7 @@
 # Alteryx PowerShell module
 
+[![PSScriptAnalyzer](https://github.com/Akaizoku/PSAYX/actions/workflows/scan.yml/badge.svg?branch=main)](https://github.com/Akaizoku/PSAYX/actions/workflows/scan.yml)
+
 Alteryx PowerShell module (PSAYX) is a framework for the automation of administration tasks for Alteryx.
 
 ## Table of contents <!-- omit in TOC -->
