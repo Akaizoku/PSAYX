@@ -4,13 +4,14 @@ function Get-InstallDirectory {
         Retrieve Alteryx installation directory
 
         .DESCRIPTION
-        Search registry for the path to Alteryx installation directory
+        Search registry for the path to the last Alteryx installation directory
 
         .NOTES
         File name:      Get-InstallDirectory.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-05
-        Last modified:  2021-09-16
+        Last modified:  2024-03-06
+        Comments:       Version parameter is deprecated but kept for back-ward compatibility
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -40,39 +41,24 @@ function Get-InstallDirectory {
     Begin {
         # Get global preference variables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-        # Registry keys
-        $Registry = [Ordered]@{
-            "Designer"  = "HKLM:HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Alteryx <Version> x64"
-            "Server"    = "HKLM:HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Alteryx <Version> x64 Server"
-        }
+        # Alteryx registry key
+        $RegistryKey = "HKLM:HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\SRC\Alteryx"
     }
     Process {
-        # Version
-        if ($PSBoundParameters.ContainsKey("Version")) {
-            $Version = @($Version.Major, $Version.Minor) -join "."
-        } else {
-            $Version = Get-AlteryxRegistryVersion
-        }
-        # Restrict to specified product if applicable
-        if ($PSBoundParameters.ContainsKey("Product")) {
-            $TmpKey = $Registry.$Product
-            $Registry.Clear()
-            $Registry.Add($Product, $TmpKey)
-        }
-        # Loop through products
-        foreach ($Key in $Registry.GetEnumerator()) {
-            # Update version in registry address
-            $RegistryKey = Set-Tags -String $Key.Value -Tags (Resolve-Tags -Tags ([Ordered]@{"Version"=$Version}) -Prefix "<" -Suffix ">")
-            # Retrieve Alteryx installation directory from registry
-            if (Test-Object -Path $RegistryKey) {
-                $InstallDirectory = (Get-ItemProperty -Path $RegistryKey).InstallLocation
-                if ($null -eq $InstallDirectory) {
-                    Write-Log -Type "WARN"  -Message "InstallLocation registry entry is missing"
-                } else {
-                    return $InstallDirectory
-                }
+        # Retrieve Alteryx installation directory from registry
+        if (Test-Object -Path $RegistryKey) {
+            Write-Log -Type "DEBUG" -Message $RegistryKey
+            $InstallDirectory = (Get-ItemProperty -Path $RegistryKey).LastInstallDir
+            if ($null -eq $InstallDirectory) {
+                Write-Log -Type "DEBUG" -Message $RegistryKey
+                Write-Log -Type "WARN"  -Message "LastInstallDir registry entry is missing"
+                Write-Log -Type "ERROR" -Message "Alteryx installation location could not be retrieved from registry" -ExitCode 1
+            } else {
+                return $InstallDirectory
             }
+        } else {
+            Write-Log -Type "WARN"  -Message "Alteryx installation registry entry is missing"
+            Write-Log -Type "ERROR" -Message "Alteryx installation location could not be retrieved from registry" -ExitCode 1
         }
-        Write-Log -Type "ERROR" -Message "Alteryx $($Key.Name) installation location could not be retrieved from registry" -ExitCode 1
     }
 }
