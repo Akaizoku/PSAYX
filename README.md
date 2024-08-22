@@ -4,7 +4,7 @@
 
 Alteryx PowerShell module (PSAYX) is a framework for the automation of administration tasks for Alteryx.
 
-## Table of contents <!-- omit in TOC -->
+## Table of contents <!-- omit in toc -->
 
 1. [Usage](#usage)
    1. [Installation](#installation)
@@ -39,29 +39,29 @@ Get-Command -Module "PSAYX"
 
 | CommandType | Name                        | Version | Source |
 | ----------- | --------------------------- | ------: | ------ |
-| Function    | Add-AlteryxLicense          |   1.0.1 | PSAYX  |
-| Function    | Backup-AlteryxDatabase      |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxInstallDirectory |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxLicense          |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxRegistryVersion  |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxServerSecret     |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxUtility          |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxVersion          |   1.0.1 | PSAYX  |
-| Function    | Install-AlteryxDataPackage  |   1.0.1 | PSAYX  |
-| Function    | Install-AlteryxServer       |   1.0.1 | PSAYX  |
-| Function    | Lock-AlteryxWorkflow        |   1.0.1 | PSAYX  |
-| Function    | New-AlteryxLicenseFile      |   1.0.1 | PSAYX  |
-| Function    | New-AlteryxPackage          |   1.0.1 | PSAYX  |
-| Function    | Remove-AlteryxLicense       |   1.0.1 | PSAYX  |
-| Function    | Reset-AlteryxLicenseServer  |   1.0.1 | PSAYX  |
-| Function    | Restore-AlteryxDatabase     |   1.0.1 | PSAYX  |
-| Function    | Set-AlteryxLicenseServer    |   1.0.1 | PSAYX  |
-| Function    | Set-AlteryxServerSecret     |   1.0.1 | PSAYX  |
-| Function    | Set-AlteryxSetting          |   1.0.1 | PSAYX  |
-| Function    | Set-AlteryxSettingFile      |   1.0.1 | PSAYX  |
-| Function    | Start-AlteryxWorkflow       |   1.0.1 | PSAYX  |
-| Function    | Test-AlteryxSettingFile     |   1.0.1 | PSAYX  |
-| Function    | Uninstall-AlteryxServer     |   1.0.1 | PSAYX  |
+| Function    | Add-AlteryxLicense          |   1.0.3 | PSAYX  |
+| Function    | Backup-AlteryxDatabase      |   1.0.3 | PSAYX  |
+| Function    | Get-AlteryxInstallDirectory |   1.0.3 | PSAYX  |
+| Function    | Get-AlteryxLicense          |   1.0.3 | PSAYX  |
+| Function    | Get-AlteryxRegistryVersion  |   1.0.3 | PSAYX  |
+| Function    | Get-AlteryxServerSecret     |   1.0.3 | PSAYX  |
+| Function    | Get-AlteryxUtility          |   1.0.3 | PSAYX  |
+| Function    | Get-AlteryxVersion          |   1.0.3 | PSAYX  |
+| Function    | Install-AlteryxDataPackage  |   1.0.3 | PSAYX  |
+| Function    | Install-AlteryxServer       |   1.0.3 | PSAYX  |
+| Function    | Lock-AlteryxWorkflow        |   1.0.3 | PSAYX  |
+| Function    | New-AlteryxLicenseFile      |   1.0.3 | PSAYX  |
+| Function    | New-AlteryxPackage          |   1.0.3 | PSAYX  |
+| Function    | Remove-AlteryxLicense       |   1.0.3 | PSAYX  |
+| Function    | Reset-AlteryxLicenseServer  |   1.0.3 | PSAYX  |
+| Function    | Restore-AlteryxDatabase     |   1.0.3 | PSAYX  |
+| Function    | Set-AlteryxLicenseServer    |   1.0.3 | PSAYX  |
+| Function    | Set-AlteryxServerSecret     |   1.0.3 | PSAYX  |
+| Function    | Set-AlteryxSetting          |   1.0.3 | PSAYX  |
+| Function    | Set-AlteryxSettingFile      |   1.0.3 | PSAYX  |
+| Function    | Start-AlteryxWorkflow       |   1.0.3 | PSAYX  |
+| Function    | Test-AlteryxSettingFile     |   1.0.3 | PSAYX  |
+| Function    | Uninstall-AlteryxServer     |   1.0.3 | PSAYX  |
 
 ## Dependencies
 
