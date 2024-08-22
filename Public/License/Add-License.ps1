@@ -10,7 +10,7 @@ function Add-License {
         File name:      Add-License.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-05
-        Last modified:  2021-10-27
+        Last modified:  2024-02-08
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -31,7 +31,7 @@ function Add-License {
             "License",
             "Keys"
         )]
-        [String]
+        [System.Array]
         $Key,
         [Parameter (
             Position    = 2,
