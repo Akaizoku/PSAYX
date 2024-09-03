@@ -12,7 +12,7 @@
 RootModule = 'PSAYX.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.3'
+ModuleVersion = '1.0.4'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -69,7 +69,8 @@ PowerShellVersion = '3.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Get-LicensedProducts', 'Invoke-LicenseAPI', 'Update-LicenseToken', 
+FunctionsToExport = 'Get-LatestRelease', 'Get-LicensedProducts', 'Get-ProductEditions', 
+               'Get-ProductReleases', 'Invoke-LicenseAPI', 'Update-LicenseToken', 
                'Invoke-ServerAPI', 'Backup-Database', 'Get-EMongoPassword', 
                'Repair-Database', 'Restore-Database', 'Lock-Workflow', 
                'Start-Workflow', 'Get-ServerSecret', 'Get-Version', 'Set-ServerSecret', 
@@ -132,7 +133,7 @@ PrivateData = @{
  } # End of PrivateData hashtable
 
 # HelpInfo URI of this module
-HelpInfoURI = 'https://github.com/Akaizoku/PSTK/blob/master/README.md'
+HelpInfoURI = 'https://github.com/Akaizoku/PSAYX/blob/main/README.md'
 
 # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
 DefaultCommandPrefix = 'Alteryx'

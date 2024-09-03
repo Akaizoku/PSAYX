@@ -11,6 +11,9 @@ function Invoke-LicenseAPI {
         Author:         Florian Carrier
         Creation date:  2024-08-20
         Last modified:  2024-08-20
+
+        .LINK
+        https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
     #>
     [CmdletBinding ()]
     Param (
@@ -77,7 +80,6 @@ function Invoke-LicenseAPI {
                 "accountId" = $AccountID
             }
         }
-        
     }
     Process {
         # Encode parameters

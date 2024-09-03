@@ -11,6 +11,9 @@ function Update-LicenseToken {
         Author:         Florian Carrier
         Creation date:  2023-03-23
         Last modified:  2024-08-22
+
+        .LINK
+        https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
     #>
     [CmdletBinding ()]
     Param (

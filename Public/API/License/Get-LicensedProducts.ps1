@@ -11,6 +11,9 @@ function Get-LicensedProducts {
         Author:         Florian Carrier
         Creation date:  2024-08-22
         Last modified:  2024-08-22
+
+        .LINK
+        https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
     #>
     [CmdletBinding ()]
     Param (
