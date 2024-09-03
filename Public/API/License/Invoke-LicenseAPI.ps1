@@ -52,6 +52,8 @@ function Invoke-LicenseAPI {
     Begin {
         # Get global preference vrariables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+        # API base URL
+        $API = "https://us1.alteryxcloud.com/license-portal/api"
         # API call headers
         $Headers = [Ordered]@{
             "accept"        = "application/json"
