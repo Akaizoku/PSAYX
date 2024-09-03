@@ -105,7 +105,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Alteryx'
+        Tags = 'Alteryx','AYX','PowerShell','PS','PoSh','Tool','ToolKit','Utility'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/Akaizoku/PSAYX/blob/main/LICENSE'
