@@ -10,7 +10,7 @@ function Get-LatestRelease {
         File name:      Get-LatestRelease.ps1
         Author:         Florian Carrier
         Creation date:  2024-09-03
-        Last modified:  2024-09-03
+        Last modified:  2024-09-04
 
         .LINK
         https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
@@ -44,7 +44,12 @@ function Get-LatestRelease {
         [ValidateNotNullOrEmpty ()]
         [System.String]
         [Alias ("Product", "ProductLineID")]
-        $ProductID
+        $ProductID,
+        [Parameter (
+            HelpMessage = "Switch to select patch releases"
+        )]
+        [Switch]
+        $Patch
     )
     Begin {
         # Get global preference vrariables
@@ -59,10 +64,28 @@ function Get-LatestRelease {
         # Parse release date
         $Response.Add("Date", $Release.releaseDate)
         # Fetch corresponding product installer download URL
-        $Installer = Get-AlteryxProductEditions -AccountID $AccountID -Token $AccessToken -ReleaseID $Release.id | Where-Object -Property "description" -EQ -Value $ProductID
+        if ($Patch) {
+            $Product = "$ProductID Patch"
+        } else {
+            $Product = $ProductID
+        }
+        $Installer = Get-AlteryxProductEditions -AccountID $AccountID -Token $AccessToken -ReleaseID $Release.id | Where-Object -Property "description" -EQ -Value $Product
+        # Parse file name
+        if ((Split-Path -Path $Installer.downloadLink -Leaf) -match '(.+?\.exe)') {
+            $FileName = $matches[1]
+        } else {
+            Write-Log -Type "WARN" -Message "Unable to parse file name"
+            $FileName = $Null
+        }
+        $Response.Add("FileName", $FileName)
         # Parse complete version number
         if ($Installer.downloadLink -match '_(\d+\.\d+(\.\d+)?(\.\d+)?(\.\d+)?)\.exe') {
             $Version = $matches[1]
+            # Hotfix for messed up patch version formatting
+            if ($Patch) {
+                $ParsedVersion = Select-String -InputObject $Version -Pattern '(\d+\.\d+\.\d+)(?:\.\d+)(\.\d+)' -AllMatches
+                $Version = [System.String]::Concat($ParsedVersion.Matches.Groups[1].Value, $ParsedVersion.Matches.Groups[2].Value)
+            }
         } else {
             $Version = $Release.version
         }
@@ -70,6 +93,7 @@ function Get-LatestRelease {
         # Expose direct download link
         $Response.Add("URL", $Installer.downloadLink)
         # Return formatted response object
+        Write-Log -Type "DEBUG" -Message $Response
         return $Response
     }
 }
