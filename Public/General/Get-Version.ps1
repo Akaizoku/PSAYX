@@ -10,7 +10,7 @@ function Get-Version {
         File name:      Get-Version.ps1
         Author:         Florian Carrier
         Creation date:  2021-09-02
-        Last modified:  2021-09-20
+        Last modified:  2024-09-04
     #>
     [CmdletBinding ()]
     Param (
@@ -22,7 +22,12 @@ function Get-Version {
         [ValidateNotNullOrEmpty ()]
         [Alias ("ServicePath")]
         [System.IO.FileInfo]
-        $Path
+        $Path,
+        [Parameter (
+            HelpMessage = "Return raw command output"
+        )]
+        [Switch]
+        $Raw
     )
     Begin {
         # Get global preference vrariables
@@ -41,6 +46,12 @@ function Get-Version {
         $Operation = "getversion"
         # Call utility
         $Output = Invoke-Service -Path $Path -Operation $Operation -WhatIf:$WhatIfPreference
-        return $Output
+        # Parse output if required
+        if ($Raw) {
+            $Version = $Output
+        } else {
+            $Version = Select-String -InputObject $Output -Pattern '(\d+\.\d+(?:\.\d+)?(?:\.\d+)?)' | ForEach-Object { $PSItem.Matches.Value }
+        }
+        return $Version
     }
 }
