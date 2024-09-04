@@ -46,6 +46,14 @@ function Get-LatestRelease {
         [Alias ("Product", "ProductLineID")]
         $ProductID,
         [Parameter (
+            Position    = 4,
+            Mandatory   = $false,
+            HelpMessage = "Alteryx product version"
+        )]
+        [ValidateNotNullOrEmpty ()]
+        [System.Version]
+        $Version,
+        [Parameter (
             HelpMessage = "Switch to select patch releases"
         )]
         [Switch]
@@ -59,8 +67,15 @@ function Get-LatestRelease {
         $Response.Add("Product", $ProductID)
     }
     Process {
-        # Fetch latest release version
-        $Release = Get-AlteryxProductReleases -AccountID $AccountID -Token $AccessToken -ProductID $ProductID | Select-Object -First 1
+        # Fetch releases
+        $Releases = Get-AlteryxProductReleases -AccountID $AccountID -Token $AccessToken -ProductID $ProductID
+        if ($Version) {
+            # Fetch latest release for specified version
+            $Release = $Releases | Where-Object -Property "Version" -EQ -Value $Version
+        } else {
+            # Fecth latest release
+            $Release = $Releases | Select-Object -First 1
+        }
         # Parse release date
         $Response.Add("Date", $Release.releaseDate)
         # Fetch corresponding product installer download URL
@@ -80,11 +95,13 @@ function Get-LatestRelease {
         $Response.Add("FileName", $FileName)
         # Parse complete version number
         if ($Installer.downloadLink -match '_(\d+\.\d+(\.\d+)?(\.\d+)?(\.\d+)?)\.exe') {
-            $Version = $matches[1]
+            $ParsedVersion = $matches[1]
             # Hotfix for messed up patch version formatting
             if ($Patch) {
-                $ParsedVersion = Select-String -InputObject $Version -Pattern '(\d+\.\d+\.\d+)(?:\.\d+)(\.\d+)' -AllMatches
-                $Version = [System.String]::Concat($ParsedVersion.Matches.Groups[1].Value, $ParsedVersion.Matches.Groups[2].Value)
+                $PatchVersion = Select-String -InputObject $ParsedVersion -Pattern '(\d+\.\d+\.\d+)(?:\.\d+)(\.\d+)' -AllMatches
+                $Version = [System.String]::Concat($PatchVersion.Matches.Groups[1].Value, $PatchVersion.Matches.Groups[2].Value)
+            } else {
+                $Version = $ParsedVersion
             }
         } else {
             $Version = $Release.version
