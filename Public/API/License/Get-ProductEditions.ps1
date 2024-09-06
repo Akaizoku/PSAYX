@@ -10,7 +10,7 @@ function Get-ProductEditions {
         File name:      Get-ProductEditions.ps1
         Author:         Florian Carrier
         Creation date:  2024-09-03
-        Last modified:  2024-09-03
+        Last modified:  2024-09-04
 
         .LINK
         https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
@@ -55,7 +55,7 @@ function Get-ProductEditions {
     }
     Process {
         # Fetch list of releases
-        $Editions = Invoke-AlteryxLicenseAPI -Token $AccessToken -Endpoint "v1/products/-/releases/-/editions" -AccountID $AccountID -Parameters $Parameters
+        $Editions = Invoke-AlteryxLicenseAPI -Token $Token -Endpoint "v1/products/-/releases/-/editions" -AccountID $AccountID -Parameters $Parameters
         # Sort editions in alphabetic order
         $SortedEditions = ($Editions | ConvertFrom-Json) | Sort-Object -Property "description"
         # Return list of editions

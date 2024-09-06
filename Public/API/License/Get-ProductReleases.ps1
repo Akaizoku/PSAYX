@@ -10,7 +10,7 @@ function Get-ProductReleases {
         File name:      Get-ProductReleases.ps1
         Author:         Florian Carrier
         Creation date:  2024-09-03
-        Last modified:  2024-09-03
+        Last modified:  2024-09-04
 
         .LINK
         https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
@@ -55,7 +55,7 @@ function Get-ProductReleases {
     }
     Process {
         # Fetch list of releases
-        $Releases = Invoke-AlteryxLicenseAPI -Token $AccessToken -Endpoint "v1/products/-/releases" -AccountID $AccountID -Parameters $Parameters
+        $Releases = Invoke-AlteryxLicenseAPI -Token $Token -Endpoint "v1/products/-/releases" -AccountID $AccountID -Parameters $Parameters
         # Sort releases by version number
         $SortedReleases = ($Releases | ConvertFrom-Json) | Sort-Object -Property "version" -Descending
         # Return ordered list of releases

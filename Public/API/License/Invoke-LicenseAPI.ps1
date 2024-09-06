@@ -10,7 +10,7 @@ function Invoke-LicenseAPI {
         File name:      Invoke-LicenseAPI.ps1
         Author:         Florian Carrier
         Creation date:  2024-08-20
-        Last modified:  2024-08-20
+        Last modified:  2024-09-04
 
         .LINK
         https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
@@ -60,7 +60,7 @@ function Invoke-LicenseAPI {
         # API call headers
         $Headers = [Ordered]@{
             "accept"        = "application/json"
-            "Authorization" = "Bearer " + $AccessToken
+            "Authorization" = "Bearer " + $Token
         }
         Write-Log -Type "DEBUG" -Message $Headers
         # Parameters

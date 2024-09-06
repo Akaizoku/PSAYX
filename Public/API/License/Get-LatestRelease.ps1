@@ -68,7 +68,7 @@ function Get-LatestRelease {
     }
     Process {
         # Fetch releases
-        $Releases = Get-AlteryxProductReleases -AccountID $AccountID -Token $AccessToken -ProductID $ProductID
+        $Releases = Get-AlteryxProductReleases -AccountID $AccountID -Token $Token -ProductID $ProductID
         if ($Version) {
             # Fetch latest release for specified version
             $Release = $Releases | Where-Object -Property "Version" -EQ -Value $Version
@@ -84,7 +84,7 @@ function Get-LatestRelease {
         } else {
             $Product = $ProductID
         }
-        $Installer = Get-AlteryxProductEditions -AccountID $AccountID -Token $AccessToken -ReleaseID $Release.id | Where-Object -Property "description" -EQ -Value $Product
+        $Installer = Get-AlteryxProductEditions -AccountID $AccountID -Token $Token -ReleaseID $Release.id | Where-Object -Property "description" -EQ -Value $Product
         # Parse file name
         if ((Split-Path -Path $Installer.downloadLink -Leaf) -match '(.+?\.exe)') {
             $FileName = $matches[1]
