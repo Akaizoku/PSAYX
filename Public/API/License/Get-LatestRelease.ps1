@@ -62,6 +62,8 @@ function Get-LatestRelease {
     Begin {
         # Get global preference vrariables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+        # Log function call
+        Write-Log -Type "DEBUG" -Message $MyInvocation.MyCommand.Name
         # Response object
         $Response = New-Object -TypeName "System.Collections.Specialized.OrderedDictionary"
         $Response.Add("Product", $ProductID)

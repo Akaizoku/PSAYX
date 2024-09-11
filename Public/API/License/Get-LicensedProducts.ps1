@@ -39,6 +39,8 @@ function Get-LicensedProducts {
     Begin {
         # Get global preference vrariables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+        # Log function call
+        Write-Log -Type "DEBUG" -Message $MyInvocation.MyCommand.Name
     }
     Process {
         $Products = Invoke-AlteryxLicenseAPI -Token $AccessToken -Endpoint "v1/products" -AccountID $AccountID

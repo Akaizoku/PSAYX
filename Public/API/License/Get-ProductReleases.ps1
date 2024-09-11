@@ -48,6 +48,8 @@ function Get-ProductReleases {
     Begin {
         # Get global preference vrariables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+        # Log function call
+        Write-Log -Type "DEBUG" -Message $MyInvocation.MyCommand.Name
         # Define parameters
         $Parameters = [Ordered]@{
             "productLineId" = $ProductID

@@ -41,6 +41,8 @@ function Update-LicenseToken {
     Begin {
         # Get global preference vrariables
         Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+        # Log function call
+        Write-Log -Type "DEBUG" -Message $MyInvocation.MyCommand.Name
         # Configuration
         $URI = "https://myalteryxsso.b2clogin.com/myalteryxsso.onmicrosoft.com/b2c_1a_signup_signin_flexera_cli/oauth2/v2.0/token"
         $Headers = [Ordered]@{
