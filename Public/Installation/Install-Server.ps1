@@ -10,7 +10,7 @@ function Install-Server {
         File name:      Install-Server.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2023-01-16
+        Last modified:  2024-09-17
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -107,34 +107,15 @@ function Install-Server {
         $Parameters = [System.Collections.ArrayList]::New()
         # Custom installation directory
         if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
-            # TODO ensure installation path is accessible
-            # if (Test-Path -Path $InstallDirectory) {
-            #     [Void]$Parameters.Add("TARGETDIR=""$InstallDirectory""")
-            # } else {
-            #     Write-Log -Type "ERROR" -Message "Path not found $InstallDirectory"
-            #     Write-Log -Type "WARN"  -Message "Reverting to default installation path"
-            # }
+            if (-Not (Test-Path -Path $InstallDirectory)) {
+                New-Item -Name $InstallDirectory -ItemType "Directory"
+            }
         }
-
     }
     Process {
-        # TODO addd check for previous installation
-        if (Compare-Version -Version $Version -Operator "ge" -Reference "2022.3") { # New command-line parameters
-            # Custom installation directory
-            if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
-                [Void]$Parameters.Add("-d ""$InstallDirectory""")
-            }
-            # Logs
-            if ($PSBoundParameters.ContainsKey("Log")) {
-                [Void]$Parameters.Add("-l ""$Log""")
-                # MSI log file
-                # [Void]$Parameters.Add("-m ""$Log""")
-            }
-            # Unattended
-            if ($Unattended -eq $true) {
-                [Void]$Parameters.Add("-s")
-            }
-        } else { # Legacy command-line parameters
+        # TODO Check for previous installation
+        # Check version to account for legacy installer command-line parameters
+        if ($PSBoundParameters.ContainsKey("Version") -And (Compare-Version -Version $Version -Operator "lt" -Reference "2022.3")) {
             # Custom installation directory
             if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
                 [Void]$Parameters.Add("TARGETDIR=""$InstallDirectory""")
@@ -159,9 +140,24 @@ function Install-Server {
             }
             # Installation
             [Void]$Parameters.Add("REMOVE=""FALSE""")
-            # Unattended
+            # Silent switch
             if ($Unattended -eq $true) {
                 [Void]$Parameters.Add("/s")
+            }
+        } else {
+            # Custom installation directory
+            if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
+                [Void]$Parameters.Add("-d ""$InstallDirectory""")
+            }
+            # Logs
+            if ($PSBoundParameters.ContainsKey("Log")) {
+                [Void]$Parameters.Add("-l ""$Log""")
+                # MSI log file
+                # [Void]$Parameters.Add("-m ""$Log""")
+            }
+            # Silent switch
+            if ($Unattended -eq $true) {
+                [Void]$Parameters.Add("-s")
             }
         }
         # Build argument list and command for debug
