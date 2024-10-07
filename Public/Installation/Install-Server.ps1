@@ -10,13 +10,13 @@ function Install-Server {
         File name:      Install-Server.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-10-27
+        Last modified:  2024-09-17
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
 
         .LINK
-        https://help.alteryx.com/current/product-activation-and-licensing/use-command-line-options
+        https://help.alteryx.com/product-activation-and-licensing/use-command-line-options
     #>
     [CmdletBinding (
         SupportsShouldProcess = $true
@@ -73,6 +73,13 @@ function Install-Server {
         [String]
         $Language,
         [Parameter (
+            Position    = 6,
+            Mandatory   = $false,
+            HelpMessage = "Version to install"
+        )]
+        [String]
+        $Version,
+        [Parameter (
             HelpMessage = "Switch to install for all users"
         )]
         [Switch]
@@ -98,43 +105,61 @@ function Install-Server {
         }
         # Define install parameters
         $Parameters = [System.Collections.ArrayList]::New()
+        # Custom installation directory
+        if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
+            if (-Not (Test-Path -Path $InstallDirectory)) {
+                New-Item -Name $InstallDirectory -ItemType "Directory"
+            }
+        }
     }
     Process {
-        # Customer installation directory
-        if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
-            [Void]$Parameters.Add("TARGETDIR=""$InstallDirectory""")
-            # TODO ensure installation path is accessible
-            # if (Test-Path -Path $InstallDirectory) {
-            #     [Void]$Parameters.Add("TARGETDIR=""$InstallDirectory""")
-            # } else {
-            #     Write-Log -Type "ERROR" -Message "Path not found $InstallDirectory"
-            #     Write-Log -Type "WARN"  -Message "Reverting to default installation path"
-            # }
-        }
-        # Logs
-        if ($PSBoundParameters.ContainsKey("Log")) {
-            [Void]$Parameters.Add("/l=""$Log""")
-        }
-        # Serial
-        if ($PSBoundParameters.ContainsKey("Serial")) {
-            [Void]$Parameters.Add("SERIAL_NUM=""$Serial""")
-        }
-        # Language
-        if ($PSBoundParameters.ContainsKey("Language")) {
-            [Void]$Parameters.Add("CMD_LANGUAGE=""$Language""")
-        }
-        # System installation
-        if ($AllUsers -eq $true) {
-            [Void]$Parameters.Add("ALLUSERS=""TRUE""")
+        # TODO Check for previous installation
+        # Check version to account for legacy installer command-line parameters
+        if ($PSBoundParameters.ContainsKey("Version") -And (Compare-Version -Version $Version -Operator "lt" -Reference "2022.3")) {
+            # Custom installation directory
+            if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
+                [Void]$Parameters.Add("TARGETDIR=""$InstallDirectory""")
+            }
+            # Logs
+            if ($PSBoundParameters.ContainsKey("Log")) {
+                [Void]$Parameters.Add("/l=""$Log""")
+            }
+            # Serial
+            if ($PSBoundParameters.ContainsKey("Serial")) {
+                [Void]$Parameters.Add("SERIAL_NUM=""$Serial""")
+            }
+            # Language
+            if ($PSBoundParameters.ContainsKey("Language")) {
+                [Void]$Parameters.Add("CMD_LANGUAGE=""$Language""")
+            }
+            # System installation
+            if ($AllUsers -eq $true) {
+                [Void]$Parameters.Add("ALLUSERS=""TRUE""")
+            } else {
+                [Void]$Parameters.Add("ALLUSERS=""FALSE""")
+            }
+            # Installation
+            [Void]$Parameters.Add("REMOVE=""FALSE""")
+            # Silent switch
+            if ($Unattended -eq $true) {
+                [Void]$Parameters.Add("/s")
+            }
         } else {
-            [Void]$Parameters.Add("ALLUSERS=""FALSE""")
+            # Custom installation directory
+            if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
+                [Void]$Parameters.Add("-d ""$InstallDirectory""")
+            }
+            # Logs
+            if ($PSBoundParameters.ContainsKey("Log")) {
+                [Void]$Parameters.Add("-l ""$Log""")
+                # MSI log file
+                # [Void]$Parameters.Add("-m ""$Log""")
+            }
+            # Silent switch
+            if ($Unattended -eq $true) {
+                [Void]$Parameters.Add("-s")
+            }
         }
-        # Unattended
-        if ($Unattended -eq $true) {
-            [Void]$Parameters.Add("/s")
-        }
-        # Installation
-        [Void]$Parameters.Add("REMOVE=""FALSE""")
         # Build argument list and command for debug
         $Arguments = $Parameters -join " "
         $Command = ("&", """$Path""", $Arguments) -join " "

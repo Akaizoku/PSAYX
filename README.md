@@ -4,7 +4,7 @@
 
 Alteryx PowerShell module (PSAYX) is a framework for the automation of administration tasks for Alteryx.
 
-## Table of contents <!-- omit in TOC -->
+## Table of contents <!-- omit in toc -->
 
 1. [Usage](#usage)
    1. [Installation](#installation)
@@ -18,7 +18,7 @@ Alteryx PowerShell module (PSAYX) is a framework for the automation of administr
 
 There are two methods of setting up the Alteryx PowerShell Module on your system:
 
-1. Download the `PSAYX` module from the [GitHub repository](https://github.com/Akaizoku/PSAYX);
+1. Download the `PSAYX` module from the [GitHub repository](https://github.com/Akaizoku/PSAYX) and extract it in the `PSModulePath` environment variable location;;
 2. Install the `PSAYX` module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/PSAYX).
 
 ```powershell
@@ -38,31 +38,42 @@ Get-Command -Module "PSAYX"
 ```
 
 | CommandType | Name                        | Version | Source |
-| ----------- | --------------------------- | ------: | ------ |
-| Function    | Add-AlteryxLicense          |   1.0.1 | PSAYX  |
-| Function    | Backup-AlteryxDatabase      |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxInstallDirectory |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxLicense          |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxRegistryVersion  |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxServerSecret     |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxUtility          |   1.0.1 | PSAYX  |
-| Function    | Get-AlteryxVersion          |   1.0.1 | PSAYX  |
-| Function    | Install-AlteryxDataPackage  |   1.0.1 | PSAYX  |
-| Function    | Install-AlteryxServer       |   1.0.1 | PSAYX  |
-| Function    | Lock-AlteryxWorkflow        |   1.0.1 | PSAYX  |
-| Function    | New-AlteryxLicenseFile      |   1.0.1 | PSAYX  |
-| Function    | New-AlteryxPackage          |   1.0.1 | PSAYX  |
-| Function    | Remove-AlteryxLicense       |   1.0.1 | PSAYX  |
-| Function    | Reset-AlteryxLicenseServer  |   1.0.1 | PSAYX  |
-| Function    | Restore-AlteryxDatabase     |   1.0.1 | PSAYX  |
-| Function    | Set-AlteryxLicenseServer    |   1.0.1 | PSAYX  |
-| Function    | Set-AlteryxServerSecret     |   1.0.1 | PSAYX  |
-| Function    | Set-AlteryxSetting          |   1.0.1 | PSAYX  |
-| Function    | Set-AlteryxSettingFile      |   1.0.1 | PSAYX  |
-| Function    | Start-AlteryxWorkflow       |   1.0.1 | PSAYX  |
-| Function    | Test-AlteryxSettingFile     |   1.0.1 | PSAYX  |
-| Function    | Uninstall-AlteryxServer     |   1.0.1 | PSAYX  |
+| :---------- | :-------------------------- | ------: | :----- |
+| Function    | Add-AlteryxLicense          |   1.1.0 | PSAYX  |
+| Function    | Backup-AlteryxDatabase      |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxEMongoPassword   |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxInstallDirectory |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxLatestRelease    |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxLicense          |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxLicensedProducts |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxProductEditions  |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxProductReleases  |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxRegistryVersion  |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxServerSecret     |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxServicePath      |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxUtility          |   1.1.0 | PSAYX  |
+| Function    | Get-AlteryxVersion          |   1.1.0 | PSAYX  |
+| Function    | Install-AlteryxDataPackage  |   1.1.0 | PSAYX  |
+| Function    | Install-AlteryxPackage      |   1.1.0 | PSAYX  |
+| Function    | Install-AlteryxServer       |   1.1.0 | PSAYX  |
+| Function    | Invoke-AlteryxLicenseAPI    |   1.1.0 | PSAYX  |
+| Function    | Invoke-AlteryxServerAPI     |   1.1.0 | PSAYX  |
+| Function    | Lock-AlteryxWorkflow        |   1.1.0 | PSAYX  |
+| Function    | New-AlteryxLicenseFile      |   1.1.0 | PSAYX  |
+| Function    | New-AlteryxPackage          |   1.1.0 | PSAYX  |
+| Function    | Remove-AlteryxLicense       |   1.1.0 | PSAYX  |
+| Function    | Repair-AlteryxDatabase      |   1.1.0 | PSAYX  |
+| Function    | Reset-AlteryxLicenseServer  |   1.1.0 | PSAYX  |
+| Function    | Restore-AlteryxDatabase     |   1.1.0 | PSAYX  |
+| Function    | Set-AlteryxLicenseServer    |   1.1.0 | PSAYX  |
+| Function    | Set-AlteryxServerSecret     |   1.1.0 | PSAYX  |
+| Function    | Set-AlteryxSetting          |   1.1.0 | PSAYX  |
+| Function    | Set-AlteryxSettingFile      |   1.1.0 | PSAYX  |
+| Function    | Start-AlteryxWorkflow       |   1.1.0 | PSAYX  |
+| Function    | Test-AlteryxSettingFile     |   1.1.0 | PSAYX  |
+| Function    | Uninstall-AlteryxServer     |   1.1.0 | PSAYX  |
+| Function    | Update-AlteryxLicenseToken  |   1.1.0 | PSAYX  |
 
 ## Dependencies
 
-This module depends on the usage of functions provided by the [PowerShell Tool Kit (PSTK)](https://www.powershellgallery.com/packages/PSTK/) module (version 1.2.4).
+This module depends on the usage of functions provided by the [PowerShell Tool Kit (PSTK)](https://www.powershellgallery.com/packages/PSTK/) module.

@@ -10,21 +10,26 @@ function Get-RegistryVersion {
         File name:      Get-RegistryVersion.ps1
         Author:         Florian Carrier
         Creation date:  2021-09-16
-        Last modified:  2021-09-16
+        Last modified:  2024-03-06
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
     #>
+    [CmdletBinding ()]
+    Param (
+        
+    )
     Begin {
         # Get global preference variables
         # Get-CallerPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-        # Registry key
-        $Registry = "HKLM:HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\SRC\Alteryx"
+        # Alteryx installation registry key
+        $RegistryKey = "HKLM:HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\SRC\Alteryx"
     }
     Process {
         # Retrieve Alteryx installation directory from registry
-        if (Test-Object -Path $Registry) {
-            $Version = (Get-ItemProperty -Path $Registry).LastVersion
+        if (Test-Object -Path $RegistryKey) {
+            Write-Log -Type "DEBUG" -Message $RegistryKey
+            $Version = (Get-ItemProperty -Path $RegistryKey).LastVersion
             if ($null -eq $Version) {
                 Write-Log -Type "WARN" -Message "LastVersion registry entry is missing"
                 Write-Log -Type "ERROR" -Message "Alteryx version could not be retrieved from registry" -ExitCode 1
@@ -32,7 +37,6 @@ function Get-RegistryVersion {
                 return $Version
             }
         } else {
-            Write-Log -Type "DEBUG" -Message $Registry
             Write-Log -Type "ERROR" -Message "Alteryx version could not be retrieved from registry" -ExitCode 1
         }
     }

@@ -10,7 +10,7 @@ function Get-Utility {
         File name:      Get-Utility.ps1
         Author:         Florian Carrier
         Creation date:  2021-09-16
-        Last modified:  2021-11-20
+        Last modified:  2022-04-27
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -27,7 +27,9 @@ function Get-Utility {
             "Engine",
             "License",
             "MongoDB",
-            "Service"
+            "Service",
+            "ServerHost",
+            "CloudCmd"
         )]
         [Alias ("Name")]
         [System.String]
@@ -51,6 +53,8 @@ function Get-Utility {
             "License"   = "License"
             "MongoDB"   = "Database"
             "Service"   = "Service"
+            "ServerHost"= "ServerHost"
+            "CloudCmd"  = "CloudCmd"
         }
     }
     Process {

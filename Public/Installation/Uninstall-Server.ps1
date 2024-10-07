@@ -10,7 +10,7 @@ function Uninstall-Server {
         File name:      Uninstall-Server.ps1
         Author:         Florian Carrier
         Creation date:  2021-06-10
-        Last modified:  2021-10-27
+        Last modified:  2023-01-17
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
@@ -40,6 +40,13 @@ function Uninstall-Server {
         [String]
         $Log,
         [Parameter (
+            Position    = 3,
+            Mandatory   = $false,
+            HelpMessage = "Version to install"
+        )]
+        [String]
+        $Version,
+        [Parameter (
             HelpMessage = "Switch to suppress all dialogs"
         )]
         [Switch]
@@ -62,16 +69,36 @@ function Uninstall-Server {
         $Parameters = [System.Collections.ArrayList]::new()
     }
     Process {
-        # Logs
-        if ($PSBoundParameters.ContainsKey("Log")) {
-            $Parameters.Add("/l=""$Log""")
+        # TODO addd check for previous installation
+        if (Compare-Version -Version $Version -Operator "ge" -Reference "2022.3") { # New command-line parameters
+            # Uninstallation
+            [Void]$Parameters.Add("-x")
+            # Custom installation directory
+            if ($PSBoundParameters.ContainsKey("InstallDirectory")) {
+                [Void]$Parameters.Add("-d ""$InstallDirectory""")
+            }
+            # Logs
+            if ($PSBoundParameters.ContainsKey("Log")) {
+                [Void]$Parameters.Add("-l ""$Log""")
+                # MSI log file
+                # [Void]$Parameters.Add("-m ""$Log""")
+            }
+            # Unattended
+            if ($Unattended -eq $true) {
+                [Void]$Parameters.Add("-s")
+            }
+        } else { # Legacy command-line parameters
+            # Uninstallation
+            [Void]$Parameters.Add("REMOVE=""TRUE""")
+            # Logs
+            if ($PSBoundParameters.ContainsKey("Log")) {
+                [Void]$Parameters.Add("/l=""$Log""")
+            }
+            # Unattended
+            if ($Unattended -eq $true) {
+                [Void]$Parameters.Add("/s")
+            }
         }
-        # Unattended
-        if ($Unattended -eq $true) {
-            $Parameters.Add("/s")
-        }
-        # Uninstallation
-        $Parameters.Add("REMOVE=""TRUE""")
         # Build argument list and command for debug
         $Arguments = $Parameters -join " "
         $Command = ("&", """$Path""", $Arguments) -join " "
