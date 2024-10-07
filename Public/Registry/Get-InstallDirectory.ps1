@@ -46,19 +46,18 @@ function Get-InstallDirectory {
     }
     Process {
         # Retrieve Alteryx installation directory from registry
+        Write-Log -Type "DEBUG" -Message $RegistryKey
         if (Test-Object -Path $RegistryKey) {
-            Write-Log -Type "DEBUG" -Message $RegistryKey
             $InstallDirectory = (Get-ItemProperty -Path $RegistryKey).LastInstallDir
-            if ($null -eq $InstallDirectory) {
-                Write-Log -Type "DEBUG" -Message $RegistryKey
-                Write-Log -Type "WARN"  -Message "LastInstallDir registry entry is missing"
-                Write-Log -Type "ERROR" -Message "Alteryx installation location could not be retrieved from registry" -ExitCode 1
-            } else {
-                return $InstallDirectory
-            }
         } else {
-            Write-Log -Type "WARN"  -Message "Alteryx installation registry entry is missing"
-            Write-Log -Type "ERROR" -Message "Alteryx installation location could not be retrieved from registry" -ExitCode 1
+            $InstallDirectory  = $null
         }
+        if ($null -eq $InstallDirectory) {
+            Write-Log -Type "WARN"  -Message "LastInstallDir registry entry is missing"
+            Write-Log -Type "ERROR" -Message "Alteryx installation location could not be retrieved from registry"
+        }
+    }
+    End {
+        return $InstallDirectory
     }
 }
