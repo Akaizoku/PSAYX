@@ -10,7 +10,7 @@ function Get-LicensedProducts {
         File name:      Get-LicensedProducts.ps1
         Author:         Florian Carrier
         Creation date:  2024-08-22
-        Last modified:  2024-08-22
+        Last modified:  2024-10-08
 
         .LINK
         https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
@@ -43,7 +43,7 @@ function Get-LicensedProducts {
         Write-Log -Type "DEBUG" -Message $MyInvocation.MyCommand.Name
     }
     Process {
-        $Products = Invoke-AlteryxLicenseAPI -Token $AccessToken -Endpoint "v1/products" -AccountID $AccountID
+        $Products = Invoke-AlteryxLicenseAPI -Token $Token -Endpoint "v1/products" -AccountID $AccountID
         return ($Products | ConvertFrom-Json)
     }
 }
