@@ -5,7 +5,7 @@ All notable changes to the [PSAYX](https://github.com/Akaizoku/PSAYX) project wi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.1](https://github.com/Akaizoku/PSAYX/releases/1.1.0) - 2024-10-08
+## [1.1.1](https://github.com/Akaizoku/PSAYX/releases/1.1.1) - 2024-10-08
 
 Bugfix and incremental improvements
 
