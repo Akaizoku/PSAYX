@@ -10,7 +10,7 @@ function Get-LatestRelease {
         File name:      Get-LatestRelease.ps1
         Author:         Florian Carrier
         Creation date:  2024-09-03
-        Last modified:  2024-09-04
+        Last modified:  2024-10-08
 
         .LINK
         https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
@@ -81,38 +81,68 @@ function Get-LatestRelease {
         # Parse release date
         $Response.Add("Date", $Release.releaseDate)
         # Fetch corresponding product installer download URL
-        if ($Patch) {
-            $Product = "$ProductID Patch"
-        } else {
-            $Product = $ProductID
+        switch ($ProductID) {
+            "Alteryx Designer" {
+                if ($Patch) {
+                    $Product = "$ProductID (Admin version) Patch"
+                } else {
+                    $Product = "$ProductID (Admin version)"
+                }
+            }
+            "Alteryx Server" {
+                if ($Patch) {
+                    $Product = "$ProductID Patch"
+                } else {
+                    $Product = $ProductID
+                }
+            }
+            "Alteryx Intelligence Suite" {
+                $Product = "$ProductID (Admin)"
+            }
+            "Data Packages" {
+                # TODO handle asynchronous release cycle & demographic packages
+                $Product = $ProductID.Replace("Spatial", "Location Insights")
+            }
+            default {
+                Write-Log -Type "WARN" -Message "$ProductID is not (yet) supported"
+                $Product = $ProductID
+            }
         }
         $Installer = Get-AlteryxProductEditions -AccountID $AccountID -Token $Token -ReleaseID $Release.id | Where-Object -Property "description" -EQ -Value $Product
         # Parse file name
-        if ((Split-Path -Path $Installer.downloadLink -Leaf) -match '(.+?\.exe)') {
-            $FileName = $matches[1]
-        } else {
-            Write-Log -Type "WARN" -Message "Unable to parse file name"
-            $FileName = $Null
-        }
-        $Response.Add("FileName", $FileName)
-        # Parse complete version number
-        if ($Installer.downloadLink -match '_(\d+\.\d+(\.\d+)?(\.\d+)?(\.\d+)?)\.exe') {
-            $ParsedVersion = $matches[1]
-            # Hotfix for messed up patch version formatting
-            if ($Patch) {
-                $PatchVersion = Select-String -InputObject $ParsedVersion -Pattern '(\d+\.\d+\.\d+)(?:\.\d+)(\.\d+)' -AllMatches
-                $Version = [System.String]::Concat($PatchVersion.Matches.Groups[1].Value, $PatchVersion.Matches.Groups[2].Value)
+        try {
+            if ((Split-Path -Path $Installer.downloadLink -Leaf) -match '(.+?\.exe)') {
+                $FileName = $matches[1]
             } else {
-                $Version = $ParsedVersion
+                Write-Log -Type "WARN" -Message "Unable to parse file name"
+                $FileName = $Null
             }
-        } else {
-            $Version = $Release.version
+            $Response.Add("FileName", $FileName)
+            # Parse complete version number
+            if ($Installer.downloadLink -match '_(\d+\.\d+(\.\d+)?(\.\d+)?(\.\d+)?)\.exe') {
+                $ParsedVersion = $matches[1]
+                # Hotfix for messed up patch version formatting
+                if ($Patch) {
+                    $PatchVersion = Select-String -InputObject $ParsedVersion -Pattern '(\d+\.\d+\.\d+)(?:\.\d+)(\.\d+)' -AllMatches
+                    $Version = [System.String]::Concat($PatchVersion.Matches.Groups[1].Value, $PatchVersion.Matches.Groups[2].Value)
+                } else {
+                    $Version = $ParsedVersion
+                }
+            } else {
+                $Version = $Release.version
+            }
+            $Response.Add("Version", $Version)
+            # Expose direct download link
+            $Response.Add("URL", $Installer.downloadLink)
+            # Return formatted response object
+            Write-Log -Type "DEBUG" -Message $Response
         }
-        $Response.Add("Version", $Version)
-        # Expose direct download link
-        $Response.Add("URL", $Installer.downloadLink)
-        # Return formatted response object
-        Write-Log -Type "DEBUG" -Message $Response
+        catch {
+            Write-Log -Type "ERROR" -Message "Failed to fetch latest release of $ProductID"
+            $Response = $null
+        }
+    }
+    End {
         return $Response
     }
 }
