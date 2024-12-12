@@ -10,7 +10,7 @@ function Update-LicenseToken {
         File name:      Update-Token.ps1
         Author:         Florian Carrier
         Creation date:  2023-03-23
-        Last modified:  2024-08-22
+        Last modified:  2024-12-10
 
         .LINK
         https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
@@ -56,8 +56,22 @@ function Update-LicenseToken {
         # Add refresh token to body
         $Body.Add("refresh_token", $Token)
         # Make API call
-        $Tokens = Invoke-RestMethod -Method "POST" -URI $URI -Headers $Headers -Body $Body
-        # Write-Log -Type "DEBUG" -Message $Tokens
+        try {
+            $Tokens = Invoke-RestMethod -Method "POST" -URI $URI -Headers $Headers -Body $Body
+        }
+        catch {
+            $ErrorMessage = "Failed to update license API token"
+            if ($PSItem -match '{[^}]+}') {
+                $JSONError          = $matches[0]
+                $ErrorDetail        = $JSONError | ConvertFrom-Json | Format-List
+                $FullErrorMessage   = $ErrorMessage + "`r" + ($ErrorDetail | Out-String)
+                Write-Log -Type "ERROR" -Message $FullErrorMessage
+            }
+            else {
+                Write-Log -Type "ERROR" -Message $ErrorMessage
+            }
+            throw $PSItem
+        }
         # Return requested tokens
         switch ($Type) {
             "Access"    { $Output = $Tokens.access_token    }

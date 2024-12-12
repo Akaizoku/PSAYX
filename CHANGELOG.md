@@ -5,6 +5,14 @@ All notable changes to the [PSAYX](https://github.com/Akaizoku/PSAYX) project wi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2](https://github.com/Akaizoku/PSAYX/releases/1.1.2) - 2024-12-12
+
+Bugfix and incremental improvements
+
+### Changed
+
+- Update-LicenseToken: Add API error handling
+
 ## [1.1.1](https://github.com/Akaizoku/PSAYX/releases/1.1.1) - 2024-10-08
 
 Bugfix and incremental improvements
