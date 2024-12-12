@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.2](https://github.com/Akaizoku/PSAYX/releases/1.1.2) - 2024-12-12
 
-Bugfix and incremental improvements
+Alteryx License API error handling
 
 ### Changed
 
