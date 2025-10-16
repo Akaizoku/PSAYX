@@ -10,7 +10,7 @@ function Update-LicenseToken {
         File name:      Update-Token.ps1
         Author:         Florian Carrier
         Creation date:  2023-03-23
-        Last modified:  2024-12-10
+        Last modified:  2025-10-16
 
         .LINK
         https://us1.alteryxcloud.com/license-portal/api/swagger-ui/index.html
@@ -44,7 +44,7 @@ function Update-LicenseToken {
         # Log function call
         Write-Log -Type "DEBUG" -Message $MyInvocation.MyCommand.Name
         # Configuration
-        $URI = "https://myalteryxsso.b2clogin.com/myalteryxsso.onmicrosoft.com/b2c_1a_signup_signin_flexera_cli/oauth2/v2.0/token"
+        $URI = "https://auth.customer-login.alteryx.com/myalteryxsso.onmicrosoft.com/b2c_1a_signup_signin_flexera_cli/oauth2/v2.0/token"
         $Headers = [Ordered]@{
             "Content-Type"  = "application/x-www-form-urlencoded"
         }
