@@ -4,19 +4,19 @@ function New-Package {
         Package Alteryx tool(s)
 
         .DESCRIPTION
-        Create an Alteryx installer package (.YXI) for a specified set of tools
+        Create an Alteryx installer package (.YXI) for a specified set of tools.
 
         .NOTES
         File name:      New-Package.psm1
         Author:         Florian Carrier
         Creation date:  2021-06-15
-        Last modified:  2021-07-05
+        Last modified:  2025-12-18
 
         .LINK
         https://www.powershellgallery.com/packages/PSAYX
 
         .LINK
-        https://help.alteryx.com/current/developer-help/package-tool
+        https://help.alteryx.com/current/en/developer-help/platform-sdk/legacy-sdks/package-a-tool.html
     #>
     [CmdletBinding (
         SupportsShouldProcess = $true
@@ -91,6 +91,11 @@ function New-Package {
         [String]
         $CompressionLevel = "Optimal",
         [Parameter (
+          HelpMessage = "Switch to disable automated versioning of packaged macros"
+        )]
+        [Switch]
+        $IgnoreVersioning,
+        [Parameter (
           HelpMessage = "Switch to enable non-interactive mode"
         )]
         [Switch]
@@ -135,6 +140,8 @@ function New-Package {
     }
     Process {
         Write-Log -Type "CHECK" -Message "Start creation of package ""$($Properties.Name)"""
+        # ------------------------------------------------------------------------------
+        #region YXI configuration file
         # Check if XML file already exist
         $XML = New-Object -TypeName "System.XML.XMLDocument"
         $ConfigurationPath = Join-Path -Path $Path -ChildPath $Configuration
@@ -205,16 +212,171 @@ function New-Package {
         if ($PSCmdlet.ShouldProcess($ConfigurationPath, "XML.Save")) {
             $XML.Save($ConfigurationPath)
         }
+        #endregion YXI configuration file
+        # ------------------------------------------------------------------------------
+        #region Macro metadata
+        if (-Not $IgnoreVersioning) {
+            # List macro files
+            $Macros = Get-ChildItem -Path $Path -Recurse -File -Filter "*.yxmc" | Where-Object { $PSItem.Directory.Name -notin @('Resources', 'Samples') }
+            foreach ($Macro in $Macros) {
+                Write-Log -Type "INFO" -Message "Updating '$($Macro.BaseName)' metadata"
+                try {
+                    [XML]$XML = Get-Content -LiteralPath $Macro.FullName -Raw
+                    # Update version number
+                    $ToolVersionNode = $XML.SelectSingleNode('/AlteryxDocument/Properties/MetaInfo/ToolVersion')
+                    $CurrentVersion = $ToolVersionNode.InnerText
+                    if ($CurrentVersion -eq $Properties.ToolVersion) {
+                        Write-Log -Type "INFO" -Message "Macro version is already up-to-date ($CurrentVersion)"
+                    } else {
+                        Write-Log -Type "INFO" -Message "Updating macro version from $CurrentVersion to $($Properties.ToolVersion)"
+                        $ToolVersionNode.InnerText = $Properties.ToolVersion
+                    }
+                    # Check author field
+                    $AuthorNode = $XML.SelectSingleNode('/AlteryxDocument/Properties/MetaInfo/Author')
+                    if ([String]::IsNullOrWhiteSpace($AuthorNode.InnerText)) {
+                        Write-Log -Type "INFO" -Message "Setting macro author"
+                        Write-Log -Type "DEBUG" -Message $Author
+                        $AuthorNode.InnerText = $Author
+                    }
+                    # Check copyright field
+                    $CopyrightNode = $XML.SelectSingleNode('/AlteryxDocument/Properties/MetaInfo/Copyright')
+                    if ([String]::IsNullOrWhiteSpace($CopyrightNode.InnerText)) {
+                        Write-Log -Type "INFO" -Message "Setting macro copyright information"
+                        $CurrentYear = (Get-Date).Year
+                        Write-Log -Type "DEBUG" -Message $CurrentYear
+                        $CopyrightNode.InnerText = $CurrentYear
+                    }
+                    # Save YXMC file
+                    Save-AlteryxXML -XML $XML -Path $Macro.FullName
+                }
+                catch {
+                    Write-Warning "Failed to update macro metadata: $($PSItem.Exception.Message)"
+                    continue
+                }
+            }
+        }
+        #endregion Macro metadata
+        # ------------------------------------------------------------------------------
+        #region Build YXI
         # Compress-Archive
         $ZIPFile            = [System.String]::Concat($Properties.Name, ".zip")
-        $YXIPackage         = [System.String]::Concat($Properties.Name, ".yxi")
         $DestinationPath    = Join-Path -Path $ParentDirectory -ChildPath $ZIPFile
         Compress-Archive -Path (Join-Path -Path $Path -ChildPath "*") -DestinationPath $DestinationPath -CompressionLevel "Optimal" -Force -WhatIf:$WhatIfPreference
-        # Rename package to YXI
+        # Set macro files version
+        if (-Not $IgnoreVersioning) {
+            Write-Log -Type "INFO" -Message "Set versioning of packaged macros"
+            try {
+                # Load compression assembly
+                Add-Type -AssemblyName "System.IO.Compression.FileSystem"
+                # Create temporary ZIP path
+                $TempZipPath    = [System.IO.Path]::GetTempFileName()
+                $SourceZip      = $null
+                $DestinationZip = $null
+                try {
+                    # Open source ZIP file as read-only
+                    $SourceZip = [System.IO.Compression.ZipFile]::OpenRead($DestinationPath)
+                    # Open destination ZIP file
+                    $DestinationZip = [System.IO.Compression.ZipFile]::Open(
+                        $TempZipPath,
+                        [System.IO.Compression.ZipArchiveMode]::Update
+                    )
+                    # Iterate through all macros of the source archive to map folders to apply versioning to
+                    $TopLevelMap    = @{}
+                    $RootMacroMap   = @{}
+                    $FolderVersion  = $($Properties.ToolVersion).Replace(".", "_")
+                    foreach ($MacroEntry in $SourceZip.Entries) {
+                        if ($MacroEntry.FullName -like "*.yxmc") {
+                            $Full = $MacroEntry.FullName -replace "\\", "/"
+                            $Dir  = [System.IO.Path]::GetDirectoryName($Full)
+                            if ($null -eq $Dir) { $Dir = "" }
+                            $Dir = $Dir -replace "\\", "/"
+                            if ([String]::IsNullOrEmpty($Dir)) {
+                                # If a macro is located at ZIP root, create a folder from the macro name (only for the YXMC itself)
+                                $BaseName = [System.IO.Path]::GetFileNameWithoutExtension($MacroEntry.Name)
+                                $RootMacroMap[$MacroEntry.Name] = [String]::Concat($BaseName, "_", $FolderVersion)
+                                continue
+                            }
+                            # Only version top-level folder; ignore nested folder names (e.g., supporting macros)
+                            $Top = ($Dir -split "/")[0]
+                            if ($Top -and -not $TopLevelMap.ContainsKey($Top)) {
+                                $TopLevelMap[$Top] = [String]::Concat($Top, "_", $FolderVersion)
+                            }
+                        }
+                    }
+                    # Iterate through all entries of the source archive
+                    foreach ($Entry in $SourceZip.Entries) {
+                        # Skip backup files
+                        if ($Entry.FullName -like "*.bak") {
+                            Write-Log -Type "DEBUG" -Message "Skipping backup file '$($Entry.Name)'"
+                            continue
+                        }
+                        $Old = $Entry.FullName -replace "\\", "/"
+                        $New = $Old
+                        $Dir = [System.IO.Path]::GetDirectoryName($Old)
+                        if ($null -eq $Dir) { $Dir = "" }
+                        $Dir = $Dir -replace "\\", "/"
+                        if ([String]::IsNullOrEmpty($Dir)) {
+                            # Root-level items:
+                            # - If macro at root; move into dedicated versioned folder 
+                            # - Otherwise retain structure
+                            if ($Old -like "*.yxmc" -and $RootMacroMap.ContainsKey($Entry.Name)) {
+                                $RootFolder = $RootMacroMap[$Entry.Name]
+                                $New = [String]::Concat($RootFolder, "/", $Entry.Name)
+                            }
+                        } else {
+                            # Non-root items: version only the first (top-level) segment
+                            $FirstSeg = ($Old -split "/")[0]
+                            if ($TopLevelMap.ContainsKey($FirstSeg)) {
+                                $VersionedTop = $TopLevelMap[$FirstSeg]
+                                $New = $Old -replace ("^" + [regex]::Escape($FirstSeg) + "/"), ($VersionedTop + "/")
+                            }
+                        }
+                        if ($Old -like "*.yxmc") {
+                            Write-Log -Type "INFO"  -Message "Versioning macro folder '$([System.IO.Path]::GetFileNameWithoutExtension($Entry.Name))'"
+                            Write-Log -Type "DEBUG" -Message "Copying macro as: ${New}"
+                        } else {
+                            Write-Log -Type "DEBUG" -Message "Copying file '$($Entry.Name)' as: ${New}"
+                        }
+                        $NewEntry = $DestinationZip.CreateEntry(
+                            $New,
+                            [System.IO.Compression.CompressionLevel]::Optimal
+                        )
+                        $SourceStream = $null
+                        $TargetStream = $null
+                        try {
+                            $SourceStream = $Entry.Open()
+                            $TargetStream = $NewEntry.Open()
+                            $SourceStream.CopyTo($TargetStream)
+                        }
+                        finally {
+                            if ($null -ne $SourceStream) { $SourceStream.Dispose() }
+                            if ($null -ne $TargetStream) { $TargetStream.Dispose() }
+                        }
+                    }
+                }
+                finally {
+                    # Ensure archives are closed to release file locks
+                    if ($null -ne $SourceZip) {
+                        $SourceZip.Dispose()
+                    }
+                    if ($null -ne $DestinationZip) {
+                        $DestinationZip.Dispose()
+                    }
+                }
+                # Replace original ZIP with updated ZIP
+                Write-Log -Type "DEBUG" -Message "Overwriting original ZIP file"
+                Move-Item -Path $TempZipPath -Destination $DestinationPath -Force
+            }
+            catch {
+                Write-Error -Message "Failed to update macros in '${DestinationPath}': $($PSItem.Exception.Message)"
+            }
+        }
+        # Rename package to YXI and append version number
         if ((Test-Path -Path $DestinationPath) -Or $WhatIfPreference) {
-            $PackagePath = Join-Path -Path $ParentDirectory -ChildPath $YXIPackage
+            $YXIPackage     = [System.String]::Concat($Properties.Name, ".", $Properties.ToolVersion, ".yxi")
+            $PackagePath    = Join-Path -Path $ParentDirectory -ChildPath $YXIPackage
             if (Test-Path -Path $PackagePath) {
-                Write-Log -Type "WARN" -Message "Path already exists $PackagePath"
+                Write-Log -Type "WARN" -Message "File already exists $PackagePath"
                 if ($Unattended -Or (Confirm-Prompt -Prompt "Do you want to overwrite the existing package?")) {
                     Remove-Item -Path $PackagePath -WhatIf:$WhatIfPreference
                     Write-Log -Type "WARN" -Message "Overwritting existing package"
@@ -227,9 +389,10 @@ function New-Package {
                 Rename-Item -Path $DestinationPath -NewName $YXIPackage -Force
             }
             Write-Log -Type "DEBUG" -Message $PackagePath
-            Write-Log -Type "CHECK" -Message "Package ""$YXIPackage"" created successfully"
+            Write-Log -Type "CHECK" -Message "Package '$YXIPackage' created successfully"
         } else {
             Write-Log -Type "ERROR" -Message "Package creation failed"
         }
+        #endregion Build YXI
     }
 }
