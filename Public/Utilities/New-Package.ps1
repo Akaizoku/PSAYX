@@ -4,7 +4,12 @@ function New-Package {
         Package Alteryx tool(s)
 
         .DESCRIPTION
-        Create an Alteryx installer package (.YXI) for a specified set of tools.
+        Create an Alteryx installer package (.YXI) for a specified set of tools and enforce semantic versioning.
+
+        Naming conventions (e.g., for version 1.0.0):
+        - Package: Package_Name_v1.0.0.yxi
+        - Tools folder: Tool_Name_1_0_0
+        - Tool name: Tool Name.yxmc
 
         .NOTES
         File name:      New-Package.psm1
@@ -231,6 +236,12 @@ function New-Package {
                         Write-Log -Type "INFO" -Message "Updating macro version from $CurrentVersion to $($Properties.ToolVersion)"
                         $ToolVersionNode.InnerText = $Properties.ToolVersion
                     }
+                    # Update tool category
+                    $CategoryNode = $XML.SelectSingleNode('/AlteryxDocument/Properties/MetaInfo/CategoryName')
+                    if ($CategoryName -ne $CategoryNode.InnerText) {
+                        Write-Log -Type "INFO" -Message "Updating macro category from $($CategoryNode.InnerText) to $CategoryName"
+                        $CategoryNode.InnerText = $CategoryName
+                    }
                     # Check author field
                     $AuthorNode = $XML.SelectSingleNode('/AlteryxDocument/Properties/MetaInfo/Author')
                     if ([String]::IsNullOrWhiteSpace($AuthorNode.InnerText)) {
@@ -259,7 +270,8 @@ function New-Package {
         # ------------------------------------------------------------------------------
         #region Build YXI
         # Compress-Archive
-        $ZIPFile            = [System.String]::Concat($Properties.Name, ".zip")
+        $PackageName        = $($Properties.Name).Replace(" ", "_")
+        $ZIPFile            = [System.String]::Concat($PackageName, ".zip")
         $DestinationPath    = Join-Path -Path $ParentDirectory -ChildPath $ZIPFile
         Compress-Archive -Path (Join-Path -Path $Path -ChildPath "*") -DestinationPath $DestinationPath -CompressionLevel "Optimal" -Force -WhatIf:$WhatIfPreference
         # Set macro files version
@@ -292,7 +304,7 @@ function New-Package {
                             $Dir = $Dir -replace "\\", "/"
                             if ([String]::IsNullOrEmpty($Dir)) {
                                 # If a macro is located at ZIP root, create a folder from the macro name (only for the YXMC itself)
-                                $BaseName = [System.IO.Path]::GetFileNameWithoutExtension($MacroEntry.Name)
+                                $BaseName = [System.IO.Path]::GetFileNameWithoutExtension($MacroEntry.Name).Replace(" ", "_")
                                 $RootMacroMap[$MacroEntry.Name] = [String]::Concat($BaseName, "_", $FolderVersion)
                                 continue
                             }
@@ -328,14 +340,14 @@ function New-Package {
                             $FirstSeg = ($Old -split "/")[0]
                             if ($TopLevelMap.ContainsKey($FirstSeg)) {
                                 $VersionedTop = $TopLevelMap[$FirstSeg]
-                                $New = $Old -replace ("^" + [regex]::Escape($FirstSeg) + "/"), ($VersionedTop + "/")
+                                $New = $Old -replace ("^" + [RegEx]::Escape($FirstSeg) + "/"), ($VersionedTop + "/")
                             }
                         }
                         if ($Old -like "*.yxmc") {
-                            Write-Log -Type "INFO"  -Message "Versioning macro folder '$([System.IO.Path]::GetFileNameWithoutExtension($Entry.Name))'"
-                            Write-Log -Type "DEBUG" -Message "Copying macro as: ${New}"
+                            Write-Log -Type "INFO"  -Message "Creating versioned macro folder '$([System.IO.Path]::GetFileNameWithoutExtension($Entry.Name))_$FolderVersion'"
+                            Write-Log -Type "DEBUG" -Message "Packaging macro ${New}"
                         } else {
-                            Write-Log -Type "DEBUG" -Message "Copying file '$($Entry.Name)' as: ${New}"
+                            Write-Log -Type "DEBUG" -Message "Packaging file $($Entry.Name)"
                         }
                         $NewEntry = $DestinationZip.CreateEntry(
                             $New,
@@ -373,7 +385,7 @@ function New-Package {
         }
         # Rename package to YXI and append version number
         if ((Test-Path -Path $DestinationPath) -Or $WhatIfPreference) {
-            $YXIPackage     = [System.String]::Concat($Properties.Name, ".", $Properties.ToolVersion, ".yxi")
+            $YXIPackage     = [System.String]::Concat($PackageName, "_v", $Properties.ToolVersion, ".yxi")
             $PackagePath    = Join-Path -Path $ParentDirectory -ChildPath $YXIPackage
             if (Test-Path -Path $PackagePath) {
                 Write-Log -Type "WARN" -Message "File already exists $PackagePath"

@@ -80,7 +80,8 @@ FunctionsToExport = 'Get-Drivers', 'Get-LatestRelease', 'Get-LicensedProducts',
                'Reset-LicenseServer', 'Set-LicenseServer', 'Get-InstallDirectory', 
                'Get-RegistryVersion', 'Get-ServicePath', 'Disable-SSL', 'Enable-SSL', 
                'Get-ServerSecret', 'Set-ServerSecret', 'Enable-DebugGui', 
-               'Get-Utility', 'Install-Package', 'New-Package', 'Save-XML'
+               'Get-Utility', 'Get-StarterKits', 'Install-Package', 
+               'New-Package', 'Save-XML'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
